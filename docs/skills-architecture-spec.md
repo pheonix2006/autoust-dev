@@ -1,5 +1,11 @@
 # Skills Architecture Spec
 
+> Current homework default (2026-09-08): use `sub-skills/tasks/do-homework.md`.
+> Complete course-source investigation before relevance filtering, a concise
+> investigation summary and short plan, then free execution. No stage paperwork,
+> phase approvals or separate repair pipelines. Contracts below describe legacy mode;
+> they do not govern ordinary homework or override the current entrypoint.
+
 > AutoStudy 的 Skills 架构设计文档。定义 post-reconnaissance 阶段的
 > pipeline 设计、skill 加载机制、skill 内容规范和组合模式。
 >

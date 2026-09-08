@@ -1,3 +1,5 @@
+"""Compatibility checks for the explicitly requested legacy staged workflow."""
+
 import re
 from pathlib import Path
 
@@ -47,11 +49,11 @@ def test_staged_route_files_exist_and_old_names_are_retired():
 
 
 def test_router_exposes_only_first_stage_routes():
-    router = read("sub-skills/tasks/do-homework.md")
+    router = read("sub-skills/tasks/do-homework-staged.md")
 
     assert "sub-skills/tasks/background-recon.md" in router
     assert "sub-skills/tasks/existing-work-recon.md" in router
-    assert referenced_runtime_paths(router) == FIRST_STAGE_ROUTE_PATHS
+    assert referenced_runtime_paths(router) - {"sub-skills/tasks/do-homework.md"} == FIRST_STAGE_ROUTE_PATHS
     assert "prelaunch_startup_inventory.json" in router
     assert "recommended_action" in router
 
@@ -63,7 +65,7 @@ def test_router_exposes_only_first_stage_routes():
 
 
 def test_router_does_not_inline_source_existing_or_planner_bodies():
-    router = read("sub-skills/tasks/do-homework.md")
+    router = read("sub-skills/tasks/do-homework-staged.md")
 
     assert "### [B] Recon Summary + Alignment Loop" not in router
     assert "### [C] Design Pipeline" not in router
@@ -127,7 +129,7 @@ def test_alignment_planning_owns_shared_alignment_and_refuses_first_stage_recon(
 
 
 def test_startup_inventory_records_workbench_path():
-    router = read("sub-skills/tasks/do-homework.md")
+    router = read("sub-skills/tasks/do-homework-staged.md")
     background = read("sub-skills/tasks/background-recon.md")
     existing = read("sub-skills/tasks/existing-work-recon.md")
 

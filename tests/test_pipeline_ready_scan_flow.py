@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -8,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def run_python(*args: str, cwd: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        [str(ROOT / ".venv" / "bin" / "python"), *args],
+        [sys.executable, *args],
         cwd=cwd,
         text=True,
         capture_output=True,

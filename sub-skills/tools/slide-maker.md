@@ -5,6 +5,11 @@ description: Generate presentation decks. Default path uses the guizang-ppt-skil
 
 # slide-maker
 
+> In default homework, follow `sub-skills/tasks/do-homework.md`. Use this guide
+> for domain/CLI advice only. Fixed spec/pipeline inputs, stage handoffs and
+> report/output schemas below belong to legacy staged mode, not prerequisites
+> for ordinary assignments. Actual source requirements still apply.
+
 Produce a slide deck for group presentations / talks. Two paths:
 
 | Path | Output | When to pick |

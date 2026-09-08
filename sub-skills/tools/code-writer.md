@@ -5,6 +5,11 @@ description: Write source code from assignment spec. Provides domain guidance fo
 
 # code-writer
 
+> In default homework, follow `sub-skills/tasks/do-homework.md`. Use this guide
+> for domain/CLI advice only. Fixed spec/pipeline inputs, stage handoffs and
+> report/output schemas below belong to legacy staged mode, not prerequisites
+> for ordinary assignments. Actual source requirements still apply.
+
 Code generation workhorse. Reads the assignment workbench and writes source
 files into `<work_dir>/src/`. This file provides cross-language guidance;
 language-specific conventions (project structure, testing, toolchain) are

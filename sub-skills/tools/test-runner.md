@@ -5,6 +5,11 @@ description: Execute the code written by code-writer (pytest + plain run) and ca
 
 # test-runner
 
+> In default homework, follow `sub-skills/tasks/do-homework.md`. Use this guide
+> for domain/CLI advice only. Fixed spec/pipeline inputs, stage handoffs and
+> report/output schemas below belong to legacy staged mode, not prerequisites
+> for ordinary assignments. Actual source requirements still apply.
+
 Runs the tests + the entry-point script that `code-writer` produced. Captures stdout/stderr/return code into a markdown report the orchestrator can show the user.
 
 ## Capabilities

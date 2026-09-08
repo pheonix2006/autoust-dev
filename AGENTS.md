@@ -6,9 +6,11 @@ This repository is governed by `skill.md`. Before handling Canvas, homework,
 course sync, note generation, or any `sub-skills/` workflow, read `skill.md`
 first and follow the route it selects.
 
-Do not preload `sub-skills/tasks/*.md`. Open only the task selected by
-`skill.md`, then follow that task's explicit handoff before reading any later
-stage.
+Do not preload `sub-skills/tasks/*.md`. Homework uses
+`sub-skills/tasks/do-homework.md`: comprehensive source investigation before
+relevance filtering, a concise investigation summary and short plan, then free
+execution and appropriate checks. No stage paperwork, phase approvals or separate
+repair pipelines. Historical workflows do not override this current default.
 
 For repository development, read `docs/DEVELOPMENT.md`. For runtime Canvas work,
 do not use development docs as task instructions unless the user is explicitly

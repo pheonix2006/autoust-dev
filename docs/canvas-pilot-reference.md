@@ -1,5 +1,11 @@
 # Canvas Pilot 项目设计发现与 AutoStudy 开发建议
 
+> Current homework default (2026-09-08): use `sub-skills/tasks/do-homework.md`.
+> Complete course-source investigation before relevance filtering, a concise
+> investigation summary and short plan, then free execution. No stage paperwork,
+> phase approvals or separate repair pipelines. Contracts below describe legacy mode;
+> they do not govern ordinary homework or override the current entrypoint.
+
 > 基于 canvas_copilot（下称 Canvas Pilot）项目的深度调查，提炼出对 AutoStudy 有参考价值的设计思想。
 > Canvas Pilot 是一个面向通用 Canvas 学校的作业自动化框架，定位与 AutoStudy 不同（通用 turnkey 产品 vs 本地 Canvas LMS assistant skill，当前已在 HKUST(GZ) 验证），但在工程设计和架构思路上有不少值得借鉴的地方。
 > 本文不建议照搬其架构，而是提炼思想、结合 AutoStudy 的 5 模块愿景和现有 ROADMAP 讨论后续开发方向。

@@ -17,6 +17,11 @@ This task follows Canvas Copilot's scan/execute split in spirit: scan writes a
 plan and then stops. AutoStudy changes the interaction shape: the plan is a
 study-assistant recommendation, not a batch automation queue.
 
+For local homework progress, `result.json` is optional legacy metadata. Missing
+records do not mean the assignment folder is empty or the work has not started.
+After a user selects an item, the current `do-homework.md` inspects that folder.
+Do not require new assignments to produce metadata just for this scan.
+
 ## Preconditions
 
 Before running, check:
@@ -150,9 +155,9 @@ Selector actions:
 | `recommended_action` | Behavior |
 |---|---|
 | `recon` | Start `do-homework.md` with the selected identifiers. |
-| `review_or_execute` | Read `existing_result_path` / `suggested_work_dir` and help the user review or approve the existing `pipeline_ready` pipeline before handing off to `task-orchestrator.md`. Do not rerun reconnaissance by default. |
+| `review_or_execute` | Pass the selected IDs and existing folder to `do-homework.md`; inspect the retained plan/deliverables and perform the requested work. An old `pipeline_ready` record does not activate staged execution or another approval gate. |
 | `review_or_submit` | Read `existing_result_path` / `suggested_work_dir` and help the user review or submit the existing draft instead of re-running reconnaissance by default. |
-| `continue` | Inspect the previous `result.json` error or revision-needed state and ask the user whether to retry. |
+| `continue` | Use `do-homework.md` to inspect existing work and continue the requested task; an optional old result record is context, not a required gate. |
 | `manual_review` | Tell the user the item likely needs manual Canvas interaction; do not treat it like a normal draftable homework item. |
 
 **Do NOT auto-download anything.** Files are only fetched when the user explicitly asks.

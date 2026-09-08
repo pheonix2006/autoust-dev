@@ -5,6 +5,10 @@ description: retained draft, repair, review, and continue state reconnaissance
 
 # Existing Work Recon
 
+> Legacy staged mode only. Load this workflow only when the user explicitly
+> requests it. Ordinary homework uses `sub-skills/tasks/do-homework.md`; existing
+> process files and task complexity do not enable this mode.
+
 Use this task only for retained drafts, existing outputs, repair requests,
 pipeline review, draft review, failed runs, and continue flows after
 `sub-skills/tasks/do-homework.md` accepts the startup inventory.

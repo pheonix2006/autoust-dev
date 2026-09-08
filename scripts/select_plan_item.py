@@ -92,6 +92,7 @@ def build_selection(date: str, plan_item: dict[str, Any], pending_item: dict[str
 
     canvas_url = merged.get("html_url") or None
 
+    # Legacy status hints are optional; the caller always enters do-homework.
     existing_status = merged.get("existing_result_status")
     result_path = merged.get("existing_result_path")
 

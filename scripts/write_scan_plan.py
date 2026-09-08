@@ -184,13 +184,13 @@ def action_for(item: dict[str, Any], result: dict[str, Any] | None) -> tuple[str
     if result:
         status = result.get("status")
         if status == "pipeline_ready":
-            return "review_or_execute", "local pipeline is ready; user should review/approve before orchestration"
+            return "review_or_execute", "legacy local plan exists; inspect the assignment folder and continue via do-homework"
         if status == "draft_ready":
             return "review_or_submit", "local draft is ready; user should review or submit"
         if status == "revision_needed":
-            return "continue", "local draft needs revision; inspect result.json before retrying"
+            return "continue", "local draft needs revision; inspect existing work and optional status record"
         if status == "error":
-            return "continue", "previous workflow ended with an error; inspect result.json before retrying"
+            return "continue", "previous workflow ended with an error; inspect existing work and optional status record"
         if result.get("deferred_to_next_run"):
             return "recon", "user deferred this item earlier; include it again for review"
 

@@ -30,8 +30,8 @@ def test_workflow_planner_starts_after_recon_confirmation_and_owns_alignment_onl
     assert "Conclusion-first `[B]` response rule" not in planner
 
 
-def test_top_level_checkpoints_split_recon_confirmation_from_alignment():
-    skill = read("skill.md")
+def test_legacy_checkpoints_split_recon_confirmation_from_alignment():
+    skill = read("sub-skills/tasks/do-homework-staged.md")
 
     assert "After exploration, present the reconnaissance briefing and ask the user to confirm the source understanding." in skill
     assert "After reconnaissance confirmation, run the alignment loop." in skill
