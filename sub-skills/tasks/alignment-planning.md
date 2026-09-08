@@ -5,6 +5,10 @@ description: homework user alignment, brainstorming, and pipeline planning
 
 # Alignment Planning
 
+> Legacy staged mode only. Load this workflow only when the user explicitly
+> requests it. Ordinary homework uses `sub-skills/tasks/do-homework.md`; existing
+> process files and task complexity do not enable this mode.
+
 This task owns user-facing intent alignment and pipeline planning. It does not
 run clean-start Canvas/source reconnaissance and does not own the first full
 reconnaissance-results briefing. For clean starts, this planner requires a confirmed reconnaissance briefing from

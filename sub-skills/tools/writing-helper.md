@@ -5,6 +5,11 @@ description: Draft structured academic prose (essay/report/reflection) from spec
 
 # writing-helper
 
+> In default homework, follow `sub-skills/tasks/do-homework.md`. Use this guide
+> for domain/CLI advice only. Fixed spec/pipeline inputs, stage handoffs and
+> report/output schemas below belong to legacy staged mode, not prerequisites
+> for ordinary assignments. Actual source requirements still apply.
+
 Academic prose workhorse. Reads the assignment workbench and produces
 `draft.md`. This file provides cross-type writing guidance; type-specific
 structure (essay/report/reflection) is in appendix files loaded based on

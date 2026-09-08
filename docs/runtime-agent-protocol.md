@@ -1,5 +1,11 @@
 # Runtime Agent Protocol
 
+> Current homework default (2026-09-08): use `sub-skills/tasks/do-homework.md`.
+> Complete course-source investigation before relevance filtering, a concise
+> investigation summary and short plan, then free execution. No stage paperwork,
+> phase approvals or separate repair pipelines. Contracts below describe legacy mode;
+> they do not govern ordinary homework or override the current entrypoint.
+
 > Status: Draft design baseline, 2026-06-04.
 > Scope: how AutoStudy should run as a Claude Code skill when handling real
 > user tasks. This is not a development roadmap and not a standalone multi-agent

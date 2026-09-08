@@ -5,6 +5,11 @@ description: Reference for calling canvascli commands from agent flows. Use when
 
 # canvascli API reference
 
+> In default homework, follow `sub-skills/tasks/do-homework.md`. Use this guide
+> for domain/CLI advice only. Fixed spec/pipeline inputs, stage handoffs and
+> report/output schemas below belong to legacy staged mode, not prerequisites
+> for ordinary assignments. Actual source requirements still apply.
+
 `canvascli` is the external Canvas command-line tool AutoStudy depends on. Data-returning commands are JSON-by-default — that's the contract that lets agents pipe their output into `jq` / Python / further processing.
 
 If `canvascli` isn't installed yet, run `canvascli-setup.md` first.

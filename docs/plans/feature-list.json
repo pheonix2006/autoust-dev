@@ -1,5 +1,22 @@
 [
   {
+    "id": "HW-INVESTIGATE-THEN-EXECUTE",
+    "category": "skill-task",
+    "priority": "P1",
+    "description": "Comprehensive source investigation before relevance filtering; concise investigation and short plan; autonomous execution without stage or repair pipelines.",
+    "acceptance": [
+      "Cover assignment/rubric, full syllabus, term announcements, modules/pages, course material inventory/content and task-bearing links before selecting relevant information",
+      "Retain useful sources, one concise investigation summary and one short pipeline.md",
+      "Continue and revise through the same workflow; no stage briefs/reviews/ledgers or repair pipelines",
+      "Preserve verification and explicit Canvas submission authorization"
+    ],
+    "evidence": [
+      "2026-09-08: 42 selected policy/legacy/scan tests; skill validation and diff checks",
+      "Independent offline scenario: all six sources inspected; an additional deliverable in an innocuously titled announcement discovered and delivered; only investigation.md, pipeline.md, assignment7.py, answer.txt produced"
+    ],
+    "status": "passing"
+  },
+  {
     "id": "M1-CANVASCLI",
     "category": "data-layer",
     "priority": "P0",

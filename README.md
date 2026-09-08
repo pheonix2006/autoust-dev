@@ -34,12 +34,12 @@ AutoStudy 是一个跑在 Claude Code / Codex 这类 agentic coding 环境里的
 | 任务 | 能力 | 产物位置 |
 |---|---|---|
 | `sync-status` | 同步 Canvas 课程、作业、公告，并生成建议计划。只规划，不自动执行作业。 | `data/runs/<date>/REPORT.md`, `plan.json`, `pending_assignments.json` |
-| `do-homework` | 建立单作业工作台，侦查 Canvas 来源，和你对齐意图，动态设计 pipeline，生成本地草稿，最后询问是否提交。 | `data/homework/<COURSE>/<HWID>/` |
+| `do-homework` | 创建或复用一个作业目录，按实际要求自主完成和验证本地产物。 | `data/homework/<COURSE>/<HWID>/` |
 | `sync-course` | 按课程归档课件、公告、module 结构，供后续复习和笔记复用。 | `data/courses/<COURSE>/` |
 | `write-course-notes` | 从已同步的 lecture PDFs 生成 Obsidian 风格 Markdown 笔记。 | `data/courses/<COURSE>/notes/` |
 
 旧 M3 阶段已经验证过 paper / slides / math / lab 四类真实作业产出。现在的主线是
-M3.5+：更深的 Canvas 侦查、明确的用户对齐、动态 pipeline、阶段级审查、可恢复的本地工作台。
+默认采用简洁作业流程：完整调查与简短计划，之后自主制作和验证；旧 M3.5 分阶段流程仅保留为显式选项。
 
 ---
 
@@ -131,61 +131,23 @@ Canvas IDs 和建议 workbench。选中编号后，不应该再靠标题模糊�
 
 ## 作业流程现在是怎样的
 
-AutoStudy 不会只看作业标题就开始生成。当前 homework contract 是：
+每项作业创建或复用 `data/homework/<COURSE>/<assignment>/`，采用同一套流程：
 
-```text
-do-homework.md router/preflight/route selection
-├── clean start -> assignment-source-intake.md
-│   -> Canvas/source/spec intake
-└── retained draft or feedback -> assignment-workflow-planner.md
-    -> current-state-intake.md
-    -> repair_plan.md / repair_pipeline_design.md
+1. **完整调查**：覆盖 assignment/rubric、syllabus、学期 announcements、课程首页、
+   modules/pages、全部课程文件目录与现有课件，以及发现的相关外链。先检查来源及
+   内容，再筛选当前任务有用的信息，不能事先凭标题判断“应该不相关”就跳过。
+2. **整理要求**：保留有用原始资料与一份简洁调查总结，说明来源覆盖、要求、日期、
+   评分点和缺口。读取失败不等于没有要求。
+3. **简短计划**：保留一份 `pipeline.md`，说明目标、交付物、做法和验证方式。
+4. **自主完成**：模型自行执行、检查与修正，不强制 stage brief/review、JSON 回执、
+   dispatch ledger 或逐阶段审批。
 
-Canvas raw snapshots, including canvas/announcements.json
--> references/REFERENCE_INDEX.md
--> references/source_docs/ and references/canvas_native/
--> spec.md
--> investigation/rubric.md and investigation/review_a.json
--> investigation/explore_context.md
--> investigation/alignment_brief.md or repair_plan.md
--> pipeline_design.md or repair_pipeline_design.md
--> stage_briefs/
--> stage_results/ and stage_reviews/
--> draft/
--> verification.log
--> result.json
-```
+继续和修改作业也使用这套流程：复用调查、核实更新与缺口，必要时更新同一份计划，
+直接修改成果。不再生成 repair plan 或 repair pipeline。已完成且仍有效的调查不用
+在同一会话的小修改中重复抓取。只有用户明确要求历史审计模式时才使用旧分阶段系统。
 
-用户侧任务名仍然是 `do-homework`。`assignment-source-intake.md`、
-`assignment-workflow-planner.md` 和 `current-state-intake.md` 是内部路由文件，
-不是用户需要直接调用的新命令。
-
-换成普通话就是：
-
-1. **路由和预检**：`do-homework.md` 建立 workbench、做 startup inventory，并选择
-   clean-start source intake 或 retained-artifact planning 路线。
-2. **侦查**：clean start 由 `assignment-source-intake.md` 通过 `canvascli` 检查
-   assignment page、rubric、front page、syllabus、modules、module items、
-   announcements、files、pages 和外部链接。
-3. **保存 reference**：`reference_collector` 把任务相关的原始证据保存到
-   `references/`，包括 PDF 三件套和逐条筛选后的
-   `references/canvas_native/announcement-<id-or-slug>/source.json`；不会把完整
-   `canvas/announcements.json` 整包塞进 `references/canvas_native/`。
-4. **写 spec**：主代理读取 `references/REFERENCE_INDEX.md` 和保存好的原始证据，
-   把真正的作业要求总结到 `spec.md`，并写 `investigation/review_a.json`。
-5. **和你对齐**：`assignment-workflow-planner.md` 只问那些不问就会猜错的问题，
-   例如 topic、group info、dataset、architecture、style、scope。
-6. **确认 agreement**：新作业写入 `investigation/alignment_brief.md`；继续修改
-   已有草稿或处理反馈时，`assignment-workflow-planner.md` 调用
-   `current-state-intake.md`，再写当前轮 `repair_plan.md`。
-7. **设计 pipeline**：根据 spec 和确认后的 intent 写 `pipeline_design.md`；retained
-   flow 按需要写 `repair_pipeline_design.md`。现在不再有固定的 “paper pipeline” 或
-   “lab pipeline”，而是按作业现场组合工具。
-8. **执行和审查**：生成 stage briefs，必要时派发 executor/reviewer，记录 receipts，运行检查，把最终产物放进 `draft/`。
-9. **提交前询问**：Canvas submission 从不自动发生。
-
-所以一个复杂项目可以在同一个 workbench 里同时产生 notebook、report PDF、slides、
-requirements、source zip、verification log 和 human review items。
+提交 Canvas 仍需明确授权。旧 `result.json` 可选兼容状态扫描，新作业不要求生成；
+没有状态记录时，继续作业应直接检查文件夹。已有作业文件不会自动清理。
 
 ---
 
@@ -233,9 +195,11 @@ AutoStudy/
 ├── sub-skills/
 │   ├── tasks/
 │   │   ├── sync-status.md
-│   │   ├── do-homework.md             # router / preflight / route selection
-│   │   ├── assignment-source-intake.md # clean-start source/spec intake
-│   │   ├── assignment-workflow-planner.md # alignment / planning / retained flow
+│   │   ├── do-homework.md             # investigate, plan, execute freely
+│   │   ├── do-homework-staged.md      # legacy opt-in router
+│   │   ├── background-recon.md        # legacy mode
+│   │   ├── existing-work-recon.md     # legacy mode
+│   │   ├── alignment-planning.md      # legacy mode
 │   │   ├── task-orchestrator.md
 │   │   ├── sync-course.md
 │   │   └── write-course-notes.md
@@ -243,7 +207,6 @@ AutoStudy/
 │       ├── canvascli-setup.md
 │       ├── canvascli-api.md
 │       ├── assignment-recon.md
-│       ├── current-state-intake.md    # retained current-state exploration
 │       ├── code-writer.md
 │       ├── writing-helper.md
 │       ├── pdf-renderer.md
@@ -273,13 +236,11 @@ AutoStudy/
 
 - `canvascli` Canvas 数据层。
 - `sync-status` scan-plan 流程。
-- `do-homework` public homework 入口；内部由 router/preflight 分流到 clean-start
-  source intake、alignment/planning、retained current-state exploration 和动态
-  pipeline planning。
-- `task-orchestrator` 基于已确认 pipeline 的本地草稿执行流。
+- `do-homework`：一个作业目录，自主制作、继续修改和验证。
+- 旧 `task-orchestrator` 仅供显式选择的分阶段模式使用。
 - M3 工具：prose、code、figures、tests、slides、PDF rendering、humanizer。
 - 课程资料同步和课程笔记生成。
-- `result.json` 记录 skipped、pipeline_ready、draft_ready、submitted、error 等状态。
+- 可选 `result.json` 兼容旧状态扫描，新作业不要求生成。
 
 仍在 hardening：
 

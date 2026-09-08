@@ -34,36 +34,11 @@ data/runs/<date>/pending_assignments.json
 帮我完成 DSAA2011 Project，先生成本地草稿，不提交
 ```
 
-用户侧作业入口仍然只有 `do-homework`。内部现在由 `do-homework.md` 做
-router/preflight/route selection：clean start 进入
-`assignment-source-intake.md` 做 source/spec intake；已有草稿或反馈进入
-`assignment-workflow-planner.md`，再调用 `current-state-intake.md`，最后写
-`repair_plan.md` / `repair_pipeline_design.md`。
-
-会生成单作业工作台：
-
-```text
-data/homework/<COURSE>/<HWID>/
-├── canvas/
-│   └── announcements.json
-├── prelaunch_startup_inventory.json
-├── references/
-│   ├── REFERENCE_INDEX.md
-│   ├── source_docs/
-│   └── canvas_native/
-│       └── announcement-<id-or-slug>/source.json
-├── spec.md
-├── investigation/explore_context.md
-├── investigation/explore_manifest.json
-├── investigation/review_a.json
-├── investigation/alignment_brief.md
-├── pipeline_design.md
-├── repair_plan.md
-├── repair_pipeline_design.md
-├── draft/
-├── verification.log
-└── result.json
-```
+作业入口为 `do-homework.md`，每项作业创建或复用一个目录。
+先完整调查课程来源（题目、rubric、syllabus、announcements、modules/pages、课件与
+外链），看过内容以后再筛选任务相关信息。保留有用资料、简洁调查总结和一份短
+`pipeline.md`，之后自主制作、验证与修改。没有强制 stage/review/ledger 或逐阶段审批。
+继续修改也走同一流程，复用调查并核实更新，不另建 repair plan/pipeline。
 
 ```text
 同步 DSAA2011 的资料
@@ -145,9 +120,7 @@ Canvas 登录：
 
 - `sync-status` 只规划，不自动做作业。
 - AutoStudy 不会自动提交 Canvas。
-- clean-start 作业草稿来自 `spec.md + alignment_brief.md + pipeline_design.md`；
-  retained draft / feedback 来自 `current-state-intake.md + repair_plan.md +
-  repair_pipeline_design.md`，不是来自标题脑补。
+- 先读实际题目、讲义和相关要求，再自主制作和检查；目录结构由作业需要决定。
 - group 信息、partner 名字、dataset、personal experience、video URL 等必须由用户提供或标记为 human review item。
 - 产物都在本地 `data/`，你需要审核后再决定是否提交。
 
@@ -159,14 +132,13 @@ Canvas 登录：
 
 - Canvas 状态同步和计划生成。
 - Canvas-grounded 作业侦查。
-- `do-homework` public 入口下的 clean-start source/spec intake、alignment/planning、
-  retained current-state exploration、本地草稿生成和验证日志。
+- `do-homework` 自主制作、继续修改和验证，旧阶段流程仅供显式选用。
 - 课程资料同步。
 - 课程笔记生成。
 
 仍在打磨：
 
-- executor/reviewer runtime 的 clean validation。
+- 简洁流程在不同类型作业中的实际使用验证。
 - 继续/修复已有草稿的体验。
 - 课程级/用户级偏好记忆。
 - 安全 sandbox 作业上的真实 Canvas submission E2E。

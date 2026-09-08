@@ -5,6 +5,10 @@ description: Execute an approved per-assignment pipeline from a workbench contai
 
 # task-orchestrator
 
+> Legacy staged mode only. Load this workflow only when the user explicitly
+> requests it. Ordinary homework uses `sub-skills/tasks/do-homework.md`; existing
+> process files and task complexity do not enable this mode.
+
 The core M3.5 execution coordination mechanism. This task is written for the
 Claude Code Main Agent. It runs only after `alignment-planning.md` has produced
 `pipeline_design.md` or `repair_pipeline_design.md` and the user has approved

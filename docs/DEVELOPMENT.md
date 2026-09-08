@@ -1,5 +1,11 @@
 # AutoStudy Development Guide
 
+> Current homework default (2026-09-08): use `sub-skills/tasks/do-homework.md`.
+> Complete course-source investigation before relevance filtering, a concise
+> investigation summary and short plan, then free execution. No stage paperwork,
+> phase approvals or separate repair pipelines. Contracts below describe legacy mode;
+> they do not govern ordinary homework or override the current entrypoint.
+
 > Entry + constraints for **developers** of AutoStudy. If you're using AutoStudy
 > as a skill (i.e. you're an end-user agent loading it to do Canvas tasks), read
 > [skill.md](../skill.md) instead.
@@ -41,7 +47,7 @@ independent review before completion claims. It is a design reference, not a
 runtime dependency. AutoStudy translates these practices into its own runtime
 protocol in `docs/runtime-agent-protocol.md`.
 
-Current M3.5 homework direction is recorded in `COLLABORATION.md` and
+Historical M3.5 staged homework direction is recorded in `COLLABORATION.md` and
 `canvas-pilot-reference.md`: use agent-led Canvas Generic Stage 1-5
 reconnaissance, write a standardized `spec.md`, keep `problem.md` only as
 compatibility, run a post-recon alignment loop that writes confirmed

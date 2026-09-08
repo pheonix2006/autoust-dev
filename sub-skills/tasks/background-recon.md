@@ -5,6 +5,10 @@ description: clean-start homework background reconnaissance
 
 # Background Recon
 
+> Legacy staged mode only. Load this workflow only when the user explicitly
+> requests it. Ordinary homework uses `sub-skills/tasks/do-homework.md`; existing
+> process files and task complexity do not enable this mode.
+
 Use this task only for `entry_preset: clean_start`. It owns clean-start
 Canvas/source reconnaissance and stops after terminal source artifacts are ready
 for the next alignment stage.

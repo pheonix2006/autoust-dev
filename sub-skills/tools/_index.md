@@ -5,6 +5,11 @@ description: Capability menu for AutoStudy tools. Read this to discover what too
 
 # Tools Index
 
+For ordinary homework, these are optional domain guides. Their historical
+spec/pipeline prerequisites and fixed document/output contracts do not apply;
+`sub-skills/tasks/do-homework.md` governs. Load only a guide that improves the
+actual deliverable, without adding process paperwork.
+
 This is the **capability menu** for AutoStudy. Read this file to discover
 available tools and their contracts. Each tool's full guidance lives in
 `sub-skills/tools/<name>.md`.

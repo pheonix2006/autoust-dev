@@ -2,6 +2,28 @@
 
 > Session-by-session handoff log. Newest entries on top. Anyone (including a future Claude session) reading this should be able to pick up cleanly.
 
+## 2026-09-08 - Complete investigation, simple homework execution
+
+The final user-approved default is comprehensive investigation before relevance
+filtering: assignment/rubric, syllabus, term-wide announcement bodies, front page,
+modules/pages, full file inventory and course material contents, plus task-bearing
+links. Preserve useful sources, a concise investigation summary and one short
+pipeline.md; execute and verify autonomously afterward. Continuation/repair uses
+the same investigation and plan, checking freshness and gaps, without separate
+repair pipelines, stages, review receipts or repeated approval gates.
+
+Updated the task, skill/bootstrap entrypoints, README variants, scan handoff and
+tool/developer-document scope. Old staged contracts remain explicit opt-in for
+compatibility; existing private coursework was untouched. The original overly
+broad removal of investigation requirements was corrected before this commit.
+Validation: 42 selected policy/legacy/scan checks and skill validation passed;
+diff check passed. A fresh independent offline scenario inspected all six course
+sources, discovered an extra answer.txt requirement in a room-announcement body,
+and produced only investigation.md, pipeline.md, assignment7.py and answer.txt.
+The program returned 14 and the text output matched Total: 14 plus newline.
+Scan tests now use sys.executable instead of a Unix-only venv path. Commit/push
+scope is the fork branch codex/simplify-homework; no private data or tmp/output.
+
 ## 2026-06-16 - Homework staged recon routing
 
 Refined the homework router split into progressive-disclosure stages:

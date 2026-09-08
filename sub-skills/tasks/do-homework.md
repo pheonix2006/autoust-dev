@@ -1,84 +1,120 @@
 ---
 name: do-homework
-description: Homework planning workflow. Use when the user asks "complete X assignment", "do my paper for DLED3020", "帮我做 lab 5". Runs Canvas Generic-style reconnaissance, aligns with the user, writes a reviewable per-assignment pipeline, and stops before execution.
+description: Investigate an assignment comprehensively, preserve its requirements and a short plan, then complete or revise it freely in one local folder.
 ---
 
 # Do Homework
 
-Use this task as the stable user-facing entrypoint for one Canvas assignment.
-It does not inline source reconnaissance, retained-work exploration, alignment,
-pipeline design, or draft execution. It routes to exactly one first-stage task
-file:
+Investigate broadly before deciding which information matters. Then keep execution
+simple: a short plan, useful deliverables and appropriate verification. New work,
+continuation, feedback and repairs all use this same workflow.
 
-```text
-clean start -> sub-skills/tasks/background-recon.md
-retained / repair / review / continue -> sub-skills/tasks/existing-work-recon.md
-```
+## One assignment folder
 
-Do not read or name later-stage files from this router. Follow the routed
-first-stage task to completion; that task owns its own tail handoff.
+Create or reuse `data/homework/<COURSE>/<assignment>/`, or the user/selector's
+existing folder. Preserve exact course and assignment IDs when available. Inspect
+existing deliverables before editing them. The instructor's submission structure
+and the user's chosen layout take precedence over local folder conventions.
 
-Clean-start source confirmation is handled inside the routed first-stage task,
-not in this router.
+## Complete investigation before implementation
 
-## Router Responsibilities
+Do not limit discovery to sources that look relevant in advance. Information can
+change the task even when its title does not mention the assignment. First cover
+the course sources below, then select the material relevant to this assignment.
 
-1. Verify `.venv/bin/canvascli version` and `.venv/bin/canvascli whoami`.
-2. Resolve exactly one assignment, using `scripts/select_plan_item.py` output
-   when available.
-3. Determine `work_dir`, `recommended_action`, and `entry_preset`.
-4. Run preflight archive/startup inventory before reading old workbench files
-   as task context.
-5. Route to the first-stage task file named in the route table.
-6. Stop there; the first-stage task owns any later handoff.
+For Canvas access, check `canvascli version` and `canvascli whoami`; consult
+`sub-skills/tools/canvascli-api.md` for atomic commands. Investigate:
 
-## Preflight Startup Inventory
+- The exact assignment: full body, rubric, attachments, submission type, naming/
+  format restrictions, deadline and timezone, availability and submission state.
+- The full syllabus and course-wide policies, including grading, collaboration,
+  permitted assistance, submission rules and late-work rules.
+- The course front page, pages, all modules and module items, including linked
+  assignment instructions, lab descriptions, starter code and external resources.
+- Announcements across the active course term, with pagination/date coverage
+  checked. Read their bodies, not only titles or keyword matches; corrections and
+  oral-instruction follow-ups may change the task. Do not use a recent-only default
+  window as evidence that earlier announcements contain nothing relevant.
+- The complete course file/material inventory and existing local course archive,
+  including lecture slides, handouts, README files, examples and starter packages.
+  Inspect contents to establish relevance; do not discard an ambiguously named
+  document on filename alone. Read task-bearing sources fully, including their
+  relevant attachments and linked instructions. Background lectures may be
+  screened by content before retaining the useful portions.
+- External links and embedded document links discovered through those sources.
+  Follow task-bearing links to their actual content. For PDFs, inspect page images
+  where extraction misses content/layout, and inspect link annotations when a
+  download target is not visible in extracted text.
 
-Before reading old workbench files as task context, write or refresh:
+Use IDs, dates, pagination and file versions to establish coverage. Reuse already
+archived originals rather than downloading identical copies. Comprehensive
+investigation means source coverage and content inspection, not duplicating every
+file or crawling unrelated external websites.
 
-```text
-<work_dir>/prelaunch_startup_inventory.json
-```
+Track which categories were checked, what was found, and what could not be read.
+Distinguish absent, empty, locked, inaccessible, stale and not-yet-checked sources.
+An empty assignment body or failed request is not proof of no requirements.
+Resolve discrepancies using source authority, specificity and update dates;
+explicitly report unresolved conflicts rather than silently choosing one.
 
-The startup inventory is the boundary between current task evidence and old
-process evidence. It must distinguish clean starts from retained-artifact starts
-and record the accepted route:
+Only after this coverage pass, distill the applicable deliverables, constraints,
+grading signals, dates, dependencies and missing information. Preserve useful
+originals/links and a concise investigation summary in the assignment folder
+(`investigation.md` is a suggested name). Include coverage, checked dates, source
+pointers and unresolved gaps, without requiring a JSON schema, duplicated source
+index, per-source receipt or subagent role. Explain the findings to the user.
 
-```json
-{
-  "work_dir": "data/homework/<COURSE>/<assignment>",
-  "entry_preset": "clean_start | retained_artifact_start",
-  "route": "background-recon.md | existing-work-recon.md",
-  "recommended_action": "recon | review_or_execute | review_or_submit | continue",
-  "retained_user_visible_artifacts": [],
-  "current_source_files": [],
-  "allowlisted_history_files": [],
-  "forbidden_context": [],
-  "archived_process_evidence": [],
-  "must_not_clean_start": false
-}
-```
+If a missing source could materially change the work, surface the gap and resolve
+it before treating the requirements as settled. Continue independent work where
+possible. User-supplied offline course bundles can serve as the investigation
+universe when explicitly scoped that way; state their coverage limits and do not
+claim live Canvas verification.
 
-Old process evidence is forbidden by default. The router must not read appendix
-artifacts, raw old process evidence, archive contents, transcripts, old stage
-receipts, stale reviews, old diagnostics, prior `pipeline_design.md`, prior
-`repair_plan.md`, or prior `repair_pipeline_design.md` unless
-`prelaunch_startup_inventory.json` allowlists the exact file or directory and
-states why it affects the current route.
+## Short plan, then autonomous execution
 
-## Route Table
+Use the investigation and user intent to write one concise `pipeline.md` (or reuse
+the existing short plan): goal, deliverables, approach and how to check the result.
+There is no required schema, stage breakdown or separate approval ceremony. Ask
+only about decisions or missing user-owned information that materially affect the
+work. Existing authorization carries forward.
 
-| Input state | Entry preset | First-stage route |
-|---|---|---|
-| `recommended_action: recon` | `clean_start` | Read `sub-skills/tasks/background-recon.md`; it owns recon briefing/source confirmation and its own tail handoff. |
-| `recommended_action: review_or_execute` or `pipeline_ready` | `retained_artifact_start` | Read `sub-skills/tasks/existing-work-recon.md`; do not rerun source recon. |
-| `recommended_action: review_or_submit` or `draft_ready` | `retained_artifact_start` | Read `sub-skills/tasks/existing-work-recon.md`; do not clean-start by default. |
-| `recommended_action: continue` or failed/interrupted work | `retained_artifact_start` | Read `sub-skills/tasks/existing-work-recon.md`; run clean-start source recon only if that stage reports missing/stale source evidence as a blocker and the router accepts a new route. |
-| Direct retained draft, prior output, feedback, repair, package, or verification request | `retained_artifact_start` | Read `sub-skills/tasks/existing-work-recon.md`. |
+Choose methods, tools, delegation and review depth to suit the actual task and
+session permissions. Produce the deliverables, run relevant code/notebooks,
+inspect rendered documents/images and fix issues. Keep tests or notes when useful;
+do not generate management paperwork merely because execution involves several
+steps. Report verification honestly and retain only evidence useful for running,
+understanding or resuming the work.
 
-## Handoff
+## Continue and revise in the same way
 
-After route selection, read only the first-stage route named in the route table.
-Do not preload, inspect, or name later-stage task files from this router. The
-first-stage task owns the next handoff after it writes its terminal artifacts
-and completes any required user confirmation checkpoint.
+Reuse the investigation, sources and current plan. Verify their coverage and
+freshness; fill gaps and check for course updates instead of treating an old
+summary as automatically current. A recent verified investigation may be reused
+for an in-session edit without refetching unchanged sources. Missing investigation
+requires completing it, not skipping to implementation. Update the same short
+plan only if the approach changes, then directly modify and verify the artifact.
+
+Do not create `repair_plan.md`, `repair_pipeline_design.md`,
+`prelaunch_startup_inventory.json`, `stage_briefs/`, `stage_results/`,
+`stage_reviews/`, dispatch ledgers or review/result schemas in this default flow.
+Do not replace them with a different mandatory set of process files. Existing
+process files are historical evidence, not instructions to restart stages; leave
+them intact unless cleanup is requested. No separate repair workflow is needed.
+
+Optional tool guides provide domain advice. Their legacy spec/pipeline/stage
+prerequisites, fixed output paths and mandatory report schemas do not apply here;
+use actual source material, the investigation and the current short plan instead.
+`result.json` remains optional for old scan/status integration. Without it the
+scanner may not know draft progress; inspect the folder rather than assuming no
+work exists. Never invent submitted/graded state.
+
+## Handoff and boundaries
+
+Link the main deliverables and briefly report checks and material limitations.
+Canvas submission requires explicit approval of the exact assignment and file.
+Keep private coursework and credentials local. Do not invent personal facts,
+partner names, missing data or verification results.
+
+The old audited/staged system in `sub-skills/tasks/do-homework-staged.md` is only
+for an explicit request for that historical mode. A complex task, a request to
+repair an artifact, or old stage/status files do not opt the user into it.

@@ -361,8 +361,8 @@ def test_recon_summary_scales_with_investigation_depth():
 
 def test_source_intake_confirmation_response_is_conclusion_first_not_artifact_inventory():
     text = read("sub-skills/tasks/background-recon.md")
-    router_text = read("sub-skills/tasks/do-homework.md")
-    skill_text = read("skill.md")
+    router_text = read("sub-skills/tasks/do-homework-staged.md")
+    skill_text = read("sub-skills/tasks/do-homework-staged.md")
     planner_text = read("sub-skills/tasks/alignment-planning.md")
     normalized_text = normalize_ws(text)
 
