@@ -2,6 +2,12 @@
 
 > Session-by-session handoff log. Newest entries on top. Anyone (including a future Claude session) reading this should be able to pick up cleanly.
 
+## 2026-09-09 - Keep local agent metadata out of the repository
+
+Removed previously tracked local agent metadata from Git while preserving the
+local files and existing ignore rule. Verified the index contains no such files;
+untracked coursework outputs remain outside this commit.
+
 ## 2026-09-08 - Complete investigation, simple homework execution
 
 The final user-approved default is comprehensive investigation before relevance
