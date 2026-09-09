@@ -2,6 +2,9 @@
 
 > 默认入口：中文完整版见 [README.md](./README.md)。英文完整版见 [README.en.md](./README.en.md)。
 
+本 Fork：[pheonix2006/autoust-dev](https://github.com/pheonix2006/autoust-dev)；
+原仓库：[Aurorra1123/autoust-dev](https://github.com/Aurorra1123/autoust-dev)。
+
 AutoStudy 是本地 Canvas LMS 学业助手，已在 HKUST(GZ) 的 Canvas 实例上验证。它跑在 Claude Code / Codex 这类
 agent 环境里，帮你同步作业、规划 ddl、侦查作业要求、生成本地草稿、整理课件和课程笔记。
 
@@ -14,6 +17,17 @@ AutoStudy 先看清 Canvas，再问清你的意图，然后生成你能审核的
 ---
 
 ## 最常用命令
+
+```text
+每天帮我巡检课程，维护学期总览和每日记录
+```
+
+使用 [daily-course-review](sub-skills/tasks/daily-course-review.md)。首次询问时间，
+默认 **08:00**，明确时区与课程范围。定时任务绑定当前 Codex 对话，在本对话显示
+启动、快速扫描和最终结果；电脑与桌面应用需保持运行。新课件默认生成简短预习，
+可以关闭。复用已有学期总览并维护每日日志，失败会保留缺口，不写成“无更新”。
+已有设置不重复询问；修改时间会更新原任务。“现在巡检一下”只运行一次。
+同对话调度不可用时会说明限制，不会悄悄换成独立任务。资料和设置保存在本地。
 
 ```text
 看看这周有什么作业
@@ -61,14 +75,14 @@ data/courses/<COURSE>/
 AutoStudy 要作为一个独立仓库运行，不是只复制一个 `skill.md`。推荐先在 Claude Code / Codex 里打开一个准备用来放 AutoStudy 的空白项目文件夹，然后说：
 
 ```text
-请把 https://github.com/Aurorra1123/autoust-dev clone 到当前空白文件夹，
+请把 https://github.com/pheonix2006/autoust-dev clone 到当前空白文件夹，
 读取里面的 skill.md，并按步骤帮我完成初始化。
 ```
 
 agent 应该先确认当前目录是空目录，再执行：
 
 ```bash
-git clone https://github.com/Aurorra1123/autoust-dev.git .
+git clone https://github.com/pheonix2006/autoust-dev.git .
 ```
 
 如果当前目录不是空的，或当前工作区不明确，agent 应该先问你要放到哪里。不要让它默默默认到 `~/workspace`、桌面或下载目录。
@@ -76,7 +90,7 @@ git clone https://github.com/Aurorra1123/autoust-dev.git .
 你也可以明确指定一个固定文件夹：
 
 ```text
-请把 https://github.com/Aurorra1123/autoust-dev clone 到 ~/workspace/autoust-dev，
+请把 https://github.com/pheonix2006/autoust-dev clone 到 ~/workspace/autoust-dev，
 然后进入这个文件夹，读取里面的 skill.md，并按步骤帮我完成初始化。
 ```
 
@@ -84,7 +98,7 @@ git clone https://github.com/Aurorra1123/autoust-dev.git .
 
 ```bash
 mkdir -p ~/workspace
-git clone https://github.com/Aurorra1123/autoust-dev.git ~/workspace/autoust-dev
+git clone https://github.com/pheonix2006/autoust-dev.git ~/workspace/autoust-dev
 cd ~/workspace/autoust-dev
 ```
 

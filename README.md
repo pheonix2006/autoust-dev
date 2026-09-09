@@ -8,13 +8,16 @@
 - [English README](./README.en.md)
 - [快速版中文 README](./README.quick.md)
 
+本分支维护于 [pheonix2006/autoust-dev](https://github.com/pheonix2006/autoust-dev)，
+基于 [Aurorra1123/autoust-dev](https://github.com/Aurorra1123/autoust-dev)。
+
 AutoStudy 是一个跑在 Claude Code / Codex 这类 agentic coding 环境里的
 **本地 Canvas LMS skill 包**，已在 HKUST(GZ) 的 Canvas 实例上验证。你用自然语言提出需求，agent 读取 `skill.md`，调用本地
 `canvascli` 数据层，把证据和产物写回这个仓库，并在关键节点询问你。
 
-它不是网页应用，不是托管服务，也不是后台偷偷跑的自动化机器人。它更像一个
-学业助手：先收集 Canvas 上的真实上下文，解释它找到了什么，遇到开放性任务时
-和你对齐方向，然后生成你可以检查、修改、决定是否提交的本地 artifacts。
+它先收集 Canvas 上的真实上下文，解释发现，再生成可以检查、修改和决定是否
+提交的本地产物。你也可以设置当前 Codex 对话中的定时课程巡检，在同一对话
+看到启动、扫描进度和结果。
 
 ---
 
@@ -23,6 +26,7 @@ AutoStudy 是一个跑在 Claude Code / Codex 这类 agentic coding 环境里的
 ```text
 "看看这周有什么作业"
 "同步课程状态"
+"每天帮我巡检课程，维护学期总览和每日记录"
 "帮我完成 DSAA2011 Project，先生成本地草稿，不提交"
 "继续改上次那个 report，让实验讨论更深入"
 "同步 DSAA2011 的课件"
@@ -34,6 +38,7 @@ AutoStudy 是一个跑在 Claude Code / Codex 这类 agentic coding 环境里的
 | 任务 | 能力 | 产物位置 |
 |---|---|---|
 | `sync-status` | 同步 Canvas 课程、作业、公告，并生成建议计划。只规划，不自动执行作业。 | `data/runs/<date>/REPORT.md`, `plan.json`, `pending_assignments.json` |
+| `daily-course-review` | 单次或定时巡检课程变化，维护学期总览、每日日志，默认为新课件生成简短预习。 | `data/reports/<term>/`，复用现有报告与课程归档 |
 | `do-homework` | 创建或复用一个作业目录，按实际要求自主完成和验证本地产物。 | `data/homework/<COURSE>/<HWID>/` |
 | `sync-course` | 按课程归档课件、公告、module 结构，供后续复习和笔记复用。 | `data/courses/<COURSE>/` |
 | `write-course-notes` | 从已同步的 lecture PDFs 生成 Obsidian 风格 Markdown 笔记。 | `data/courses/<COURSE>/notes/` |
@@ -43,6 +48,23 @@ AutoStudy 是一个跑在 Claude Code / Codex 这类 agentic coding 环境里的
 
 ---
 
+## 每日课程巡检
+
+说“每天帮我巡检课程”即可进入 [daily-course-review](sub-skills/tasks/daily-course-review.md)。
+首次设置会主动询问运行时间，默认 **08:00**，并明确显示时区、学期、课程范围和
+预习开关。使用 **当前 Codex 对话中的定时巡检**：开始、快速扫描和最终结果都在
+本对话显示，包括无更新的日子。电脑与桌面应用需要保持运行；如果当前环境不支持
+同对话调度，会说明限制，仍可手动巡检。已有相同任务会更新，不重复创建。
+
+每轮检查公告、syllabus、作业正文及附件、Files、Modules/Pages 等入口，不能只看
+Files 列表。首次建立完整基线，以后检查各入口变化，深入阅读新内容和未解决的来源。
+持续维护当前学期的课程与 syllabus 总览，以及每天的变化、检查结果和缺口记录。
+新课件默认生成简短预习，用户可关闭；已有人工笔记会保留。读取失败不会写成“无更新”。
+
+说“现在巡检一下课程”只运行一次；说“把每日巡检改到九点”更新已有设置。
+课程原件、个人配置、总览、日志和笔记都留在本地忽略目录，不上传到 GitHub。
+发布本 task 不会自动创建定时任务或迁移已有个人自动化。
+
 ## 快速开始
 
 ### 1. 让 agent 加载这个 skill
@@ -50,14 +72,14 @@ AutoStudy 是一个跑在 Claude Code / Codex 这类 agentic coding 环境里的
 AutoStudy 是一个完整的本地仓库，不是单独一个 `skill.md` 文件。第一次使用时，最稳的方式是在 Claude Code / Codex 里先打开一个你准备用来放 AutoStudy 的空白项目文件夹，然后让 agent 直接 clone 到当前目录：
 
 ```text
-请把 https://github.com/Aurorra1123/autoust-dev clone 到当前空白文件夹，
+请把 https://github.com/pheonix2006/autoust-dev clone 到当前空白文件夹，
 读取里面的 skill.md，并按步骤帮我完成初始化。
 ```
 
 agent 应该先确认当前目录是空目录，再执行等价于下面的命令：
 
 ```bash
-git clone https://github.com/Aurorra1123/autoust-dev.git .
+git clone https://github.com/pheonix2006/autoust-dev.git .
 ```
 
 如果当前目录不是空的，或者你还没有打开一个明确的项目文件夹，agent 应该先问你要放到哪里，而不是默认放进 `~/workspace`、桌面、下载目录或其他隐式位置。
@@ -65,7 +87,7 @@ git clone https://github.com/Aurorra1123/autoust-dev.git .
 你也可以明确指定一个路径：
 
 ```text
-请把 https://github.com/Aurorra1123/autoust-dev clone 到 ~/workspace/autoust-dev，
+请把 https://github.com/pheonix2006/autoust-dev clone 到 ~/workspace/autoust-dev，
 然后进入这个文件夹，读取里面的 skill.md，并按步骤帮我完成初始化。
 ```
 
@@ -73,7 +95,7 @@ git clone https://github.com/Aurorra1123/autoust-dev.git .
 
 ```bash
 mkdir -p ~/workspace
-git clone https://github.com/Aurorra1123/autoust-dev.git ~/workspace/autoust-dev
+git clone https://github.com/pheonix2006/autoust-dev.git ~/workspace/autoust-dev
 cd ~/workspace/autoust-dev
 ```
 
@@ -202,6 +224,7 @@ AutoStudy/
 │   │   ├── alignment-planning.md      # legacy mode
 │   │   ├── task-orchestrator.md
 │   │   ├── sync-course.md
+│   │   ├── daily-course-review.md
 │   │   └── write-course-notes.md
 │   └── tools/
 │       ├── canvascli-setup.md

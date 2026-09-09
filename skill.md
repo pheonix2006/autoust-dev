@@ -1,6 +1,6 @@
 ---
 name: autostudy
-description: Local Canvas LMS study assistant. Check assignments, complete homework, continue drafts, archive course materials and support course learning. Validated on HKUST(GZ).
+description: Local Canvas LMS study assistant. Check assignments, complete homework, archive materials, review daily course changes and support course learning. Validated on HKUST(GZ).
 ---
 
 # AutoStudy
@@ -14,12 +14,19 @@ Run from this repository; resolve `.venv/`, `data/`, `scripts/` and
 | User request | Read |
 |---|---|
 | What is due / check or sync Canvas status | `sub-skills/tasks/sync-status.md` |
+| Review course changes, maintain a semester overview and daily journal, or set up recurring Canvas review | `sub-skills/tasks/daily-course-review.md` |
 | Do, continue, fix, review or package an assignment | `sub-skills/tasks/do-homework.md` |
 | Download/archive course materials | `sub-skills/tasks/sync-course.md` |
 | Generate course notes | `sub-skills/tasks/write-course-notes.md` |
 | First-time setup or expired login | `sub-skills/tools/canvascli-setup.md` |
 
 Load only the relevant task and the tools it needs.
+
+`daily-course-review` handles both one-off reviews and user-requested scheduling.
+Its Codex schedule stays in the current conversation with visible progress;
+setup asks for a time (default 08:00) and displays the timezone and saved scope.
+It maintains the semester overview and daily journal, with brief preparation
+notes enabled by default. A one-off review does not create a schedule.
 
 ## Homework default
 

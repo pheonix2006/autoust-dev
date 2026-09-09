@@ -1,5 +1,23 @@
 [
   {
+    "id": "DAILY-COURSE-REVIEW",
+    "category": "skill-task",
+    "priority": "P1",
+    "description": "Current-conversation course review with user-selected time, semester overview, daily journal and optional brief preparation notes.",
+    "acceptance": [
+      "One-off review does not schedule; recurring setup asks for time with 08:00 default and displays timezone and scope",
+      "Use verified current-conversation heartbeat, visible progress and duplicate-safe updates",
+      "Check all source entrances and linked files, preserve failed baselines and distinguish content changes from metadata",
+      "Reuse semester overview and daily journal; preserve human notes and keep runtime data local"
+    ],
+    "evidence": [
+      "2026-09-09: 46 existing regression tests passed; root/task skill frontmatter validated",
+      "Independent read-only review and two offline behavioral exercises; see docs/verification/2026-09-09/daily-course-review.md",
+      "No live scheduling or Canvas scan was performed; runtime capability and schedule readback remain first-use checks"
+    ],
+    "status": "passing"
+  },
+  {
     "id": "HW-INVESTIGATE-THEN-EXECUTE",
     "category": "skill-task",
     "priority": "P1",

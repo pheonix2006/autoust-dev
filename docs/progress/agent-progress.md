@@ -2,6 +2,17 @@
 
 > Session-by-session handoff log. Newest entries on top. Anyone (including a future Claude session) reading this should be able to pick up cleanly.
 
+## 2026-09-09 - Daily course review task
+
+Added `daily-course-review` with a progressively loaded source-coverage appendix,
+current-conversation scheduling, saved scope/timezone, a semester overview and
+daily journal, and optional brief preparation notes enabled by default. Related
+archive/note tasks reuse authorized review settings; README installation examples
+now select this fork while crediting upstream. Private data and the existing
+personal automation are unchanged. Validation evidence and its offline limits
+are recorded in `docs/verification/2026-09-09/daily-course-review.md`; existing
+untracked `output/` and `tmp/` are outside this change.
+
 ## 2026-09-09 - Keep local agent metadata out of the repository
 
 Removed previously tracked local agent metadata from Git while preserving the

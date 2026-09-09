@@ -14,6 +14,18 @@ future learning tools.
 
 ## Preconditions
 
+### When called by daily-course-review
+
+Use the course IDs, term, archive locations and download scope already selected
+by `daily-course-review.md`; do not repeat the interactive scope questions below.
+Follow that task's source-coverage appendix for all entrances, linked files,
+hash-based reuse/versioning and failed-baseline handling. The older snippets
+below describe archive conventions and a basic manual sync, not the complete
+daily-review algorithm. Keep distinct term/course identities and file IDs even
+when names match. Preserve teacher originals and human edits. The daily-review
+task owns the overview, journal and visible progress; this task supplies archive
+guidance. Outside that invocation, retain the manual behavior below.
+
 Before running, check:
 1. `.venv/` exists with `canvascli` installed (test: `.venv/bin/canvascli version`)
 2. A saved session exists (test: `.venv/bin/canvascli whoami` returns 0)

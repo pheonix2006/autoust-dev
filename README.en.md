@@ -9,16 +9,19 @@ Other versions:
 - [Default Chinese README](./README.md)
 - [Quick Chinese README](./README.quick.md)
 
+This fork is maintained at [pheonix2006/autoust-dev](https://github.com/pheonix2006/autoust-dev),
+based on [Aurorra1123/autoust-dev](https://github.com/Aurorra1123/autoust-dev).
+
 AutoStudy is a **local Canvas LMS skill package** for Claude Code /
 Codex-style agentic coding environments, validated on HKUST(GZ)'s Canvas
 instance. You ask in natural language; the agent reads `skill.md`, calls the
 local `canvascli` data layer, writes evidence and artifacts into this
 repository, and asks before key actions.
 
-It is not a web app, hosted service, or hidden automation bot. It is closer to a
-study assistant: it gathers Canvas context, explains what it found, aligns with
-you when a task is open-ended, then produces local artifacts you can inspect,
-edit, and decide whether to submit.
+It gathers Canvas context, explains findings, and produces local artifacts you
+can inspect, edit, and decide whether to submit. You can also schedule course
+reviews in the current Codex conversation, with visible start, progress and
+completion messages in that same conversation.
 
 ---
 
@@ -27,6 +30,7 @@ edit, and decide whether to submit.
 ```text
 "看看这周有什么作业"
 "同步课程状态"
+"Review my courses daily and maintain the semester overview and daily journal"
 "帮我完成 DSAA2011 Project，先生成本地草稿，不提交"
 "继续改上次那个 report，让实验讨论更深入"
 "同步 DSAA2011 的课件"
@@ -38,6 +42,7 @@ Current user-facing tasks:
 | Task | What It Does | Output |
 |---|---|---|
 | `sync-status` | Refreshes Canvas courses, assignments, announcements, and creates an assistant plan. It does **not** execute assignments. | `data/runs/<date>/REPORT.md`, `plan.json`, `pending_assignments.json` |
+| `daily-course-review` | Reviews course changes once or on a schedule, maintains the semester overview/daily journal, and prepares brief notes for new lectures by default. | `data/reports/<term>/`, reusing existing reports and course archives |
 | `do-homework` | Creates or reuses an assignment folder and completes/verifies local work according to the actual task. | `data/homework/<COURSE>/<HWID>/` |
 | `sync-course` | Archives course files, announcements, and module structure for reuse. | `data/courses/<COURSE>/` |
 | `write-course-notes` | Generates Obsidian-style Markdown notes from synced lecture PDFs. | `data/courses/<COURSE>/notes/` |
@@ -49,6 +54,28 @@ The former M3.5 staged workflow is explicit opt-in only.
 
 ---
 
+## Daily Course Review
+
+Ask for a daily course review to use [daily-course-review](sub-skills/tasks/daily-course-review.md).
+Setup asks for a time, defaults to **08:00**, and displays the timezone, semester,
+course scope and preparation-note setting. Codex uses a schedule in the **current
+conversation**, showing start, quick-scan and final messages there, including
+unchanged days. Keep the computer and desktop app running. If this scheduling
+capability is unavailable, the task explains the limitation and supports manual
+review. Matching existing schedules are updated rather than duplicated.
+
+Reviews check syllabus, announcements, assignments and linked attachments,
+Files, Modules/Pages and other course entrances. The first review builds a
+baseline; later reviews inspect changes and unresolved sources, maintaining the
+current semester overview and daily journal. New lectures get brief preparation
+notes by default; this is configurable and preserves handwritten annotations.
+Failed reads are reported as gaps, never as evidence of no changes.
+
+A request to review now runs once. Changing a scheduled review reuses its saved
+settings. All course content, reports, notes and personal settings remain local
+under ignored paths. Publishing this task does not create a schedule or migrate
+an existing personal automation.
+
 ## Quick Start
 
 ### 1. Load The Skill
@@ -58,7 +85,7 @@ first run, the safest flow is to open an empty project folder in Claude Code /
 Codex, then ask the agent to clone AutoStudy into the current directory:
 
 ```text
-Clone https://github.com/Aurorra1123/autoust-dev into the current empty folder,
+Clone https://github.com/pheonix2006/autoust-dev into the current empty folder,
 then read skill.md and help me initialize it.
 ```
 
@@ -66,7 +93,7 @@ The agent should confirm the current directory is empty, then run the equivalent
 of:
 
 ```bash
-git clone https://github.com/Aurorra1123/autoust-dev.git .
+git clone https://github.com/pheonix2006/autoust-dev.git .
 ```
 
 If the current directory is not empty, or if no clear project folder is open,
@@ -76,7 +103,7 @@ the agent should ask where to place the repository instead of silently choosing
 You can also provide an explicit folder:
 
 ```text
-Clone https://github.com/Aurorra1123/autoust-dev into ~/workspace/autoust-dev,
+Clone https://github.com/pheonix2006/autoust-dev into ~/workspace/autoust-dev,
 then enter that folder, read skill.md, and help me initialize it.
 ```
 
@@ -84,7 +111,7 @@ If you prefer to clone it yourself:
 
 ```bash
 mkdir -p ~/workspace
-git clone https://github.com/Aurorra1123/autoust-dev.git ~/workspace/autoust-dev
+git clone https://github.com/pheonix2006/autoust-dev.git ~/workspace/autoust-dev
 cd ~/workspace/autoust-dev
 ```
 
@@ -222,6 +249,7 @@ AutoStudy/
 │   │   ├── alignment-planning.md      # legacy mode
 │   │   ├── task-orchestrator.md
 │   │   ├── sync-course.md
+│   │   ├── daily-course-review.md
 │   │   └── write-course-notes.md
 │   └── tools/
 │       ├── canvascli-setup.md

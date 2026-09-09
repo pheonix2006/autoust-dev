@@ -5,6 +5,27 @@ description: Generate structured course notes from lecture PDFs using parallel A
 
 # Write Course Notes
 
+## Daily-review mode
+
+When invoked by `daily-course-review.md`, use its saved preparation-note setting
+and exact new/substantively changed lecture list. Skip the interactive selection
+and detailed-note pipeline below; existing authorization supplies the scope.
+If notes are disabled, generate none. Default to brief Chinese preparation notes
+under the existing `notes/` directory: a short overview, core ideas/examples,
+pitfalls, 2–5 self-check questions and source pages. Support readable lecture
+PDF/PPTX/DOCX sources using appropriate extraction/rendering tools; do not claim
+coverage of unreadable slides. No lecture material means skip notes, not stop
+the course review. Metadata-only changes do not regenerate notes.
+
+Preserve personal annotations and existing detailed notes. Update only clearly
+identified generated preview content; otherwise add a linked update beside the
+existing note. Maintain `notes/README.md` without replacing unrelated entries.
+Any delegated readers return evidence/drafts; the main agent owns final writes
+to notes and shared indexes. This mode takes precedence over the per-run
+questions, per-PDF writer assignments and blanket no-overwrite rule below.
+
+## Manual full-note mode
+
 Fixed-pipeline note generation from archived lecture PDFs. Uses a parallel
 Agent Team — one Agent per lecture PDF — to produce structured, Obsidian-style
 Markdown notes.

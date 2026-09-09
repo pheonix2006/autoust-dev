@@ -5,6 +5,10 @@ description: Sync Canvas data and present a markdown summary of upcoming deadlin
 
 # Sync Status
 
+For recurring course review, maintaining a semester overview/daily journal, or
+preparing new lecture material automatically, route to `daily-course-review.md`.
+An ordinary deadline/status request stays here and does not set up a schedule.
+
 The flagship M2 task, now with an M3.5 planning layer. The user asks something like:
 - "看看这周有什么作业"
 - "帮我同步课程状态"
