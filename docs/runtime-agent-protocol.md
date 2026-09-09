@@ -1,3 +1,5 @@
+> 仅供用户明确选择的历史分阶段审计模式使用；普通作业不加载本协议。现行目录见 [学习工作区规范](workspace-layout.md)。
+
 # Runtime Agent Protocol
 
 > Current homework default (2026-09-08): use `sub-skills/tasks/do-homework.md`.
@@ -64,7 +66,7 @@ Examples:
 - `skill.md`
 - `sub-skills/tasks/*.md`
 - `sub-skills/tools/*.md`
-- the current task workbench under `data/homework/...` or `data/courses/...`
+- the current task workbench under `data/semesters/<TERM>/courses/.../homework` or `data/semesters/<TERM>/courses/...`
 - `spec.md`, `pipeline_design.md`, stage briefs, stage results, stage reviews
 
 These documents answer: what does the user need now, what facts have been
@@ -1130,7 +1132,7 @@ Concrete examples live in `docs/examples/runtime/`:
 For homework:
 
 ```text
-data/homework/<COURSE>/<HWID>/
+data/semesters/<TERM>/courses/<COURSE>/homework/<HWID>/
 ├── canvas/
 ├── spec.md
 ├── problem.md
@@ -1158,7 +1160,7 @@ data/homework/<COURSE>/<HWID>/
 └── result.json
 ```
 
-For course-level tasks, `data/courses/<COURSE>/` has a different shape, but the
+For course-level tasks, `data/semesters/<TERM>/courses/<COURSE>/` has a different shape, but the
 same principle applies: persistent source archive first, then derived outputs.
 
 ### `pipeline_design.md` / `repair_pipeline_design.md`

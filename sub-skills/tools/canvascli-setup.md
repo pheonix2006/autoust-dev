@@ -1,180 +1,58 @@
 ---
 name: canvascli-setup
-description: Bootstrap canvascli (the Canvas LMS CLI AutoStudy depends on) and walk the user through one-time SSO. Run this when canvascli is missing or when a saved session has expired.
+description: Initialize the learning workspace and its local Canvas CLI environment; use interactive SSO only when necessary.
 ---
 
-# canvascli setup
+# Canvas CLI 初始化
 
-AutoStudy talks to Canvas through [`canvascli`](https://github.com/Aurorra1123/canvascli) — a separate open-source Python CLI. This skill installs canvascli into AutoStudy's local venv and gets the user logged in.
+遵循 [学习工作区规范](../../docs/workspace-layout.md)。两个同级独立仓库使用 [pheonix2006/autoust-dev](https://github.com/pheonix2006/autoust-dev) 与 [pheonix2006/canvascli](https://github.com/pheonix2006/canvascli)。先检查并复用已有路径与虚拟环境，不覆盖用户文件，不把示例主目录当成默认位置。
 
-**This skill is meant to be executed by the agent**, not read by the user. Each step is a concrete shell action; only Step 3 (`canvascli init`) requires the user to do something themselves (interact with the SSO browser window).
+## 环境与安装
 
-## When to run this
+从 AutoStudy 仓库根运行。先检查 Python、`.venv/`、CLI 版本及 `whoami`，只补缺失步骤。Python 版本要求以当前 Canvas CLI `pyproject.toml` 为准。支持使用已验证的工作区虚拟环境；下列以仓库内 `.venv/` 为例。
 
-Invoke this skill if any of the following is true:
+Windows PowerShell：
 
-- A fresh clone of AutoStudy (no `.venv/` yet)
-- `which canvascli` and `.venv/bin/canvascli version` both fail
-- Any `canvascli` call returns "Canvas session expired" or HTTP 401 → jump to **Step 3** only
-
-## Step 0: Detect what's missing
-
-Run this first so you know which steps to skip:
-
-```bash
-test -d .venv && echo "venv: ok" || echo "venv: MISSING"
-.venv/bin/canvascli version 2>/dev/null && echo "canvascli: ok" || echo "canvascli: MISSING"
-.venv/bin/canvascli whoami >/dev/null 2>&1 && echo "session: ok" || echo "session: MISSING"
+```powershell
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install -e ../canvascli
+.venv/Scripts/python.exe -m playwright install chromium
+.venv/Scripts/canvascli.exe version
+.venv/Scripts/canvascli.exe whoami
 ```
 
-Branch:
-
-- All three `ok` → setup is already done, return to the calling task.
-- `venv: MISSING` → start at Step 1.
-- `canvascli: MISSING` → start at Step 2.
-- `session: MISSING` only → jump to Step 3.
-
-## Step 1: Create AutoStudy's venv
+macOS/Linux：
 
 ```bash
 python3 -m venv .venv
-.venv/bin/pip install --upgrade pip --quiet
+.venv/bin/python -m pip install -e ../canvascli
+.venv/bin/python -m playwright install chromium
+.venv/bin/canvascli version
+.venv/bin/canvascli whoami
 ```
 
-That's it. Python 3.9+ is required; macOS/Linux ship with one.
+优先本地同级 editable 安装，保证使用当前 checkout。若用户只需要发布版、不保留 CLI 仓库，可以在对应环境执行 `python -m pip install "git+https://github.com/pheonix2006/canvascli.git"`。不要同时保留来源不明的不同 CLI 版本；用实际环境的 `version` 验证。
 
-## Step 2: Install canvascli + Chromium
+下载失败时检查实际网络与用户已有代理，不自行设定代理节点或端口。Playwright 缺少浏览器时安装完整 Chromium；系统依赖按当前平台报错处理，不假定所有机器都已安装 Python。
 
-One pip command pulls canvascli straight from GitHub. Playwright is a transitive dep; Chromium needs a separate one-shot install.
+## 会话检查与登录
 
-```bash
-.venv/bin/pip install "git+https://github.com/Aurorra1123/canvascli" --quiet
-.venv/bin/playwright install chromium
-```
+`canvascli whoami` 检查保存的会话。`init` 是明确的交互登录命令，不是健康检查。已有有效会话时不重复询问学校或打开登录窗口。
 
-**Verify:**
-
-```bash
-.venv/bin/canvascli version    # should print "canvascli 0.1.0" or higher
-```
-
-### If `pip install` or `playwright install` is slow (Mainland China)
-
-Try the Tsinghua PyPI mirror for pip:
-
-```bash
-.venv/bin/pip install "git+https://github.com/Aurorra1123/canvascli" \
-    -i https://pypi.tuna.tsinghua.edu.cn/simple --quiet
-```
-
-For Chromium, set an HTTP proxy before `playwright install` (replace with whatever proxy the user actually has):
-
-```bash
-export http_proxy=http://127.0.0.1:6666 https_proxy=http://127.0.0.1:6666 \
-       HTTP_PROXY=http://127.0.0.1:6666 HTTPS_PROXY=http://127.0.0.1:6666
-.venv/bin/playwright install chromium
-```
-
-### Pitfall: `chromium_headless_shell` is not enough
-
-`playwright install chromium` may install only `chromium_headless_shell`, which can't pop a real window for SSO. If `canvascli init` later complains about a missing browser, re-run:
-
-```bash
-.venv/bin/playwright install chromium --with-deps
-```
-
-This installs the full headed Chromium build alongside the headless one.
-
-## Step 3: One-time SSO login
-
-`canvascli init` launches a real browser, waits for the user to complete Canvas SSO, and saves a cookie. **This is an explicit login/refresh command, not a health check.** To check whether the current saved session already works, run `canvascli whoami`; do not run `init` just to "try logging in". If `whoami` already works, do not ask the user for their school or Canvas URL.
-
-This step needs a real terminal — Claude Code's `!` bash channel has no TTY — but `init` doesn't use `input()` (it polls), so you can still launch it from the agent. The user just has to be at their keyboard when the browser pops.
-
-For a fresh setup with no configured Canvas instance, ask exactly one setup question:
-
-- "Which school do you use Canvas with? A school name, domain, or Canvas login page URL is enough."
-
-Interpret the answer:
-
-- URL-looking answer: normalize it to the Canvas web root and run:
-
-  ```bash
-  .venv/bin/canvascli init --canvas-url "https://canvas.example.edu"
-  ```
-
-- School/domain answer: search `<school> Canvas login`; prefer `canvas.<domain>`, `<school>.instructure.com`, or another page that is clearly a Canvas login page. If the result is ambiguous, ask for the direct Canvas login page URL.
-- Expired configured session: do not ask for school/URL again; run:
-
-  ```bash
-  .venv/bin/canvascli init
-  ```
-
-Before launching, adapt this message to the selected instance:
+首次未配置实例时取得用户的 Canvas 根 URL；学校名不足以唯一确定实例时再询问 URL。用对应平台的 CLI 执行：
 
 ```text
-The next command opens a Chromium window for Canvas SSO.
-Complete the login in that window; canvascli auto-detects success and closes itself.
-If the SSO page offers "remember login" or "trust this browser", select it.
+canvascli init --canvas-url "https://canvas.example.edu"
 ```
 
-The remember-login checkbox is separate from `state.json`: a successful `init`
-creates `state.json` either way, but selecting the checkbox lets the school's
-SSO remember this browser for the next re-login. If the user skips it, today's
-`state.json` can still work, but the next `init` after expiration may require a
-full manual login again.
+告诉用户将在浏览器中完成 SSO。若学校提供“记住登录 / 信任此浏览器”，建议选择，以便保存的 SSO 状态日后能续签。CLI 会检测登录成功并保存状态。已有配置只需重新登录时使用 `canvascli init`，无需再问学校。
 
-Then run the appropriate command from above.
+当前 fork 对受支持的 GET 请求遇到 401 时，会尝试使用保存的 SSO 状态续签并重试。续签是否成功取决于学校策略、SSO 状态和运行环境；不要承诺永久免登录。CLI 明确报告自动续签不可用或失败后再运行 `init`。不要自动重放提交等写请求。
 
-What you'll see in stderr:
+网络、代理、SSL 或权限错误不等于会话过期；保留错误类别并针对原因处理。404 也不能笼统解释为功能关闭或来源不存在，需核对命令语义、权限和对象。
 
-- `Opening browser at https://<configured Canvas host>/ ...`
-- (user finishes SSO in the window)
-- `logged in as <Name> (id=<uid>)`
-- `session saved to ~/Library/Application Support/canvascli/state.json`
+## 验证与归档入口
 
-The cookie lives outside the repo, in the user's OS-standard config dir (`~/Library/Application Support/canvascli/` on macOS, `~/.config/canvascli/` on Linux), so it can never accidentally leak into a git commit.
+运行 `canvascli whoami` 后，核对实际 Canvas 学期、课程列表和 IDs。目录学期规范化例如 `2026-27 Fall` → `2026-27-Fall`。按目录规范开始状态扫描或课程同步，不创建旧的全局课程／作业／扫描树。
 
-## Step 4: Verify
-
-```bash
-.venv/bin/canvascli whoami --pretty
-```
-
-Should print the user's Canvas profile. Interpret failures carefully:
-
-- `No saved session` means `state.json` is missing or was never written.
-- HTTP 401 / "session expired" means `state.json` exists but Canvas no longer accepts it.
-- Network or SSL errors are not login failures; retry the command or check proxy/network first.
-
-For the first two cases, re-run Step 3. For network/SSL errors, do not ask the user to re-login unless a retry proves the saved session is actually rejected.
-
-Once `whoami` is happy, return to the calling task.
-
-## Cookie expiration
-
-When `canvascli` returns "Canvas session expired" or HTTP 401:
-
-1. Tell the user: "Your Canvas session has expired — I'll re-run the login."
-2. Jump straight to **Step 3**.
-3. **Never silently retry** — Canvas cookies expire when the school's SAML assertion does, and only a fresh SSO can re-issue them.
-4. During re-login, remind the user to select "remember login" / "trust this browser" if the SSO page offers it.
-
-## Files this skill creates
-
-| Path | Purpose | Sensitive? |
-|---|---|---|
-| `.venv/` (in the AutoStudy working dir) | Python virtualenv | No |
-| `~/Library/Caches/ms-playwright/` (macOS) | Chromium binary | No |
-| `~/Library/Application Support/canvascli/state.json` (macOS)<br>or `~/.config/canvascli/state.json` (Linux) | Canvas session cookie | **YES — never echo, never commit** |
-
-`.gitignore` already excludes `.venv/`, and the cookie lives outside the repo, so neither can leak into git.
-
-## Pitfalls
-
-1. **Don't `pip install -e` a clone.** That was the old developer flow. End users install from GitHub directly via `pip install "git+https://github.com/Aurorra1123/canvascli"` — no clone needed, no path assumptions.
-2. **Don't drive `canvascli init` non-interactively.** The user must actually be at their machine to complete SSO; the `init` command can't be automated end-to-end.
-3. **Don't use `canvascli init` as a status check.** It always opens a browser. Use `canvascli whoami` to verify the existing `state.json`.
-4. **Remember login is not `state.json`.** `state.json` is the Canvas API cookie saved by canvascli; the SSO remember-login checkbox only affects how much manual work the next SSO refresh needs.
-5. **Single configured Canvas instance.** canvascli stores one configured Canvas instance with the saved session. If the user changes schools or Canvas hosts, re-run `canvascli init --canvas-url "<direct Canvas URL>"`.
-6. **Treat HTTP 404 from canvascli as "feature disabled"**, not as an error. Some Canvas courses turn off Quizzes / Modules / Discussions; canvascli returns empty arrays in that case.
+认证状态保存在 CLI 的平台配置位置，具体路径以当前实现为准。禁止打印、复制到聊天或成果、加入 Git；保存位置在仓库外也不代表绝无泄漏风险。`.venv/`、`data/` 保持忽略。完成后返回原任务，无需再次批准已授权的读取和初始化。

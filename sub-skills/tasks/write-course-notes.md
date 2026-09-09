@@ -5,6 +5,8 @@ description: Generate structured course notes from lecture PDFs using parallel A
 
 # Write Course Notes
 
+目录与身份规则见 [学习工作区规范](../../docs/workspace-layout.md)。示例中的 `<TERM>` 必须由已核对的学期元数据替换；从仓库根运行命令，Windows 使用 `.venv/Scripts/`。
+
 ## Daily-review mode
 
 When invoked by `daily-course-review.md`, use its saved preparation-note setting
@@ -30,7 +32,7 @@ Fixed-pipeline note generation from archived lecture PDFs. Uses a parallel
 Agent Team — one Agent per lecture PDF — to produce structured, Obsidian-style
 Markdown notes.
 
-**Prerequisite**: `data/courses/<COURSE>/materials/lectures/` must contain PDFs
+**Prerequisite**: `data/semesters/<TERM>/courses/<COURSE>/materials/lectures/` must contain PDFs
 from a prior `sync-course` run. If empty, tell the user to run sync-course first.
 
 **Reference**: Modeled after AutoPku's `write-notes` task skill.
@@ -40,7 +42,7 @@ from a prior `sync-course` run. If empty, tell the user to run sync-course first
 ### Step 1: Discover lectures
 
 ```bash
-COURSE_DIR="data/courses/<COURSE>"
+COURSE_DIR="data/semesters/<TERM>/courses/<COURSE>"
 LECTURES_DIR="$COURSE_DIR/materials/lectures"
 
 # List PDFs sorted by name
@@ -251,7 +253,7 @@ graph TD
 
 ### Step 4: Generate index (README.md)
 
-After all agents complete, generate `data/courses/<COURSE>/notes/README.md`:
+After all agents complete, generate `data/semesters/<TERM>/courses/<COURSE>/notes/README.md`:
 
 ```bash
 .venv/bin/python -c "
@@ -306,10 +308,10 @@ print(f'README.md generated with {len(notes)} notes indexed')
 ```
 
 Report results:
-- `X 个课件笔记已生成 → data/courses/<COURSE>/notes/`
+- `X 个课件笔记已生成 → data/semesters/<TERM>/courses/<COURSE>/notes/`
 - List each note file with page count and key topics extracted.
 
 **Safety rules:**
 - Do NOT overwrite existing notes without user confirmation.
-- Do NOT modify anything under `data/homework/`.
+- Do NOT modify anything under `data/semesters/<TERM>/courses/*/homework/`.
 - Do NOT generate PDF output — only Markdown.

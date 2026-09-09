@@ -1,3 +1,5 @@
+> 历史设计或验证记录：正文保留当时的路径、流程和结果，不作为当前初始化或运行指令。现行目录见 [学习工作区规范](../../workspace-layout.md)，默认作业流程见 [do-homework](../../../sub-skills/tasks/do-homework.md)。
+
 # Homework Source Body Audit Design
 
 > 2026-06-13 · Design for strengthening `do-homework` reconnaissance so broad Canvas indexing is paired with bounded, subagent-driven source body reading.

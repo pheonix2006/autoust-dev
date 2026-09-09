@@ -54,6 +54,8 @@ def test_pipeline_ready_scan_plan_surfaces_review_or_execute_high_priority(tmp_p
 
     result = run_python(
         str(ROOT / "scripts" / "write_scan_plan.py"),
+        "--term", "2026-27-Fall",
+        "--data-dir", str(tmp_path / "data"),
         "--assignments-json",
         str(tmp_path / "assignments.json"),
         "--courses-json",
@@ -127,10 +129,10 @@ def test_pipeline_ready_selector_marks_existing_pipeline(tmp_path: Path):
 
 def test_pipeline_ready_user_docs_use_runtime_status_names_and_action():
     sync_status = read("sub-skills/tasks/sync-status.md")
-    readme_en = read("README.en.md")
+    compatibility_docs = sync_status + read("skill.md")
 
     assert "`review_or_execute`" in sync_status
-    assert "`pipeline_ready`" in readme_en
-    assert "`draft_ready`" in readme_en
-    assert "pipeline-ready" not in readme_en
-    assert "draft-ready" not in readme_en
+    assert "`pipeline_ready`" in compatibility_docs
+    assert "`draft_ready`" in compatibility_docs
+    assert "pipeline-ready" not in compatibility_docs
+    assert "draft-ready" not in compatibility_docs

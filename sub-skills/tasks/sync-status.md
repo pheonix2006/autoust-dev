@@ -5,6 +5,8 @@ description: Sync Canvas data and present a markdown summary of upcoming deadlin
 
 # Sync Status
 
+目录与身份规则见 [学习工作区规范](../../docs/workspace-layout.md)。示例中的 `<TERM>` 必须由已核对的学期元数据替换；从仓库根运行命令，Windows 使用 `.venv/Scripts/`。
+
 For recurring course review, maintaining a semester overview/daily journal, or
 preparing new lecture material automatically, route to `daily-course-review.md`.
 An ordinary deadline/status request stays here and does not set up a schedule.
@@ -38,19 +40,23 @@ If either is missing, redirect to `canvascli-setup.md`. Do NOT proceed silently.
 
 ### Step 1: Refresh data
 
+Resolve the actual Canvas term first, then normalize its directory name according
+to the workspace layout. Pass the same explicit `--term "<actual Canvas term>"`
+to each fetch so a changed CLI default cannot mix semester snapshots.
+
 Call canvascli. Capture JSON to disk for the rest of the flow:
 
 ```bash
-mkdir -p data/sync/current
-.venv/bin/canvascli courses > data/sync/current/courses.json
-.venv/bin/canvascli assignments > data/sync/current/assignments.json
-.venv/bin/canvascli announcements > data/sync/current/announcements.json
+mkdir -p data/semesters/<TERM>/sync/current
+.venv/bin/canvascli courses --term "<actual Canvas term>" > data/semesters/<TERM>/sync/current/courses.json
+.venv/bin/canvascli assignments --term "<actual Canvas term>" > data/semesters/<TERM>/sync/current/assignments.json
+.venv/bin/canvascli announcements --term "<actual Canvas term>" > data/semesters/<TERM>/sync/current/announcements.json
 ```
 
 Also copy these raw snapshots into today's run directory:
 
 ```text
-data/runs/<today>/raw/
+data/semesters/<TERM>/runs/<today>/raw/
 ├── courses.json
 ├── assignments.json
 └── announcements.json
@@ -59,26 +65,26 @@ data/runs/<today>/raw/
 These default to the latest active Canvas term. If the user explicitly asks for a
 semester, pass the same `--term "<term name>"` to all three commands.
 
-If any returns exit code 2 with "session expired" on stderr, the cookie's gone — direct the user to re-run `canvascli init` and stop.
+The CLI attempts supported automatic SSO renewal before reporting expired-session failure. If renewal fails, follow `canvascli-setup.md`; network and permission failures are distinct.
 
 ### Step 2: Build the assistant plan
 
 Invoke the stable scan-plan writer:
 
 ```bash
-.venv/bin/python scripts/write_scan_plan.py
+.venv/bin/python scripts/write_scan_plan.py --term "<actual Canvas term>"
 ```
 
 It reads:
 
-- `data/sync/current/assignments.json`
-- `data/sync/current/courses.json`
-- `data/homework/**/result.json`
+- `data/semesters/<TERM>/sync/current/assignments.json`
+- `data/semesters/<TERM>/sync/current/courses.json`
+- `data/semesters/<TERM>/courses/*/homework/**/result.json`
 
 It writes:
 
 ```text
-data/runs/<today>/
+data/semesters/<TERM>/runs/<today>/
 ├── pending_assignments.json
 ├── plan.json
 └── REPORT.md
@@ -94,12 +100,12 @@ the current canvascli snapshots with local `result.json` receipts.
 ### Step 3: Read the JSON and REPORT
 
 Use the `Read` tool on:
-- `data/sync/current/courses.json` — latest active-term enrollment list, or the requested term
-- `data/sync/current/assignments.json` — flat list of assignments for the same term
-- `data/sync/current/announcements.json` — announcements (often empty for HKUST(GZ))
-- `data/runs/<today>/pending_assignments.json` — actionable assignments after Canvas state and local result filtering
-- `data/runs/<today>/plan.json` — suggested next steps
-- `data/runs/<today>/REPORT.md` — user-facing plan draft
+- `data/semesters/<TERM>/sync/current/courses.json` — latest active-term enrollment list, or the requested term
+- `data/semesters/<TERM>/sync/current/assignments.json` — flat list of assignments for the same term
+- `data/semesters/<TERM>/sync/current/announcements.json` — announcements (often empty for HKUST(GZ))
+- `data/semesters/<TERM>/runs/<today>/pending_assignments.json` — actionable assignments after Canvas state and local result filtering
+- `data/semesters/<TERM>/runs/<today>/plan.json` — suggested next steps
+- `data/semesters/<TERM>/runs/<today>/REPORT.md` — user-facing plan draft
 
 ### Step 4: Compute the summary
 
@@ -133,7 +139,7 @@ the plan the first thing the user can act on:
 
 ### Step 5: Offer next actions
 
-After the summary, use `AskUserQuestion` to offer follow-ups:
+After the summary, offer concise follow-ups if useful; use the runtime's available interaction mechanism:
 
 ```
 What would you like to do next?
@@ -147,7 +153,7 @@ If the user chooses a numbered plan item, resolve it through the stable selector
 before starting any homework workflow:
 
 ```bash
-.venv/bin/python scripts/select_plan_item.py --index <N> --pretty
+.venv/bin/python scripts/select_plan_item.py --term "<actual Canvas term>" --index <N> --pretty
 ```
 
 Use the selector output as the handoff object for `do-homework.md`. Do not
@@ -202,9 +208,9 @@ Keep tone informative but not noisy. The user wants to scan in 5 seconds.
 
 | Situation | Behavior |
 |---|---|
-| `data/sync/current/*.json` doesn't exist after fetch | Fetch must have failed silently — show the user the fetch command stderr |
-| `data/runs/<today>/plan.json` missing | Re-run `scripts/write_scan_plan.py`; if it fails, show the short stderr and fall back to classic summary |
-| User selects an invalid plan index | Run `scripts/select_plan_item.py --index <N>`; show its short stderr and ask for a valid item number |
+| `data/semesters/<TERM>/sync/current/*.json` doesn't exist after fetch | Fetch must have failed silently — show the user the fetch command stderr |
+| `data/semesters/<TERM>/runs/<today>/plan.json` missing | Re-run `scripts/write_scan_plan.py --term "<actual Canvas term>"`; if it fails, show the short stderr and fall back to classic summary |
+| User selects an invalid plan index | Run `scripts/select_plan_item.py --term "<actual Canvas term>" --index <N>`; show its short stderr and ask for a valid item number |
 | All sections empty | Still respond with a "you're caught up ✓" message + courses overview |
 | `due_at` is `null` | Skip from time-based sections, but count in courses overview |
 | Announcement `message` is HTML | Don't render HTML; just show title + posted date |

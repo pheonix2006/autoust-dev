@@ -1,3 +1,5 @@
+> 历史设计或验证记录：正文保留当时的路径、流程和结果，不作为当前初始化或运行指令。现行目录见 [学习工作区规范](../../workspace-layout.md)，默认作业流程见 [do-homework](../../../sub-skills/tasks/do-homework.md)。
+
 # Direct-Source Reference Collector Recon Design
 
 > 2026-06-15 · Design update for simplifying `do-homework [A]`

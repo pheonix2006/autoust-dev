@@ -20,14 +20,14 @@ When the task type is `report`, use this section structure as a reference:
 6. **Conclusion** — summary of findings, future work
 7. **References** — only entries from `references.bib`
 
-Not every report needs all sections. Follow spec/pipeline_design/rubric for
+Not every report needs all sections. Follow spec/current plan/rubric for
 which sections are required and their relative weight.
 
 ## Report-specific guidance
 
 - **Figures and tables**: each gets a number (Figure 1, Table 1) and a caption.
   Referenced in text as "see Figure 1". Use `draft/figures/` outputs from code
-  or figure-maker stages, referenced from `draft/report.md` as
+  or figure-making work, referenced from `draft/report.md` as
   `figures/<name>.png`.
 - **Minimum visual integration for ML/data reports**: when generated plots are
   available, embed at least the figures needed to support the main claims. A
@@ -41,7 +41,7 @@ which sections are required and their relative weight.
   quality issue unless the spec explicitly asks for text-only output or a strict
   page limit makes figures impossible.
 - **Data integrity**: if the report presents experimental results (accuracy, loss,
-  timing), these numbers must come from actual code execution in a prior stage.
+  timing), these numbers must come from actual code execution.
   Never estimate metrics like "accuracy ~0.75 based on typical sklearn performance".
 - **LaTeX math in markdown**: use `$...$` for inline and `$$...$$` for display
   equations. pdf-renderer handles compilation.

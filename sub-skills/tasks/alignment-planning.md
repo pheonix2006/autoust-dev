@@ -5,6 +5,8 @@ description: homework user alignment, brainstorming, and pipeline planning
 
 # Alignment Planning
 
+目录与身份规则见 [学习工作区规范](../../docs/workspace-layout.md)。示例中的 `<TERM>` 必须由已核对的学期元数据替换；从仓库根运行命令，Windows 使用 `.venv/Scripts/`。
+
 > Legacy staged mode only. Load this workflow only when the user explicitly
 > requests it. Ordinary homework uses `sub-skills/tasks/do-homework.md`; existing
 > process files and task complexity do not enable this mode.
@@ -304,7 +306,7 @@ If the user stops, write `result.json` with `status: "skipped"`:
 
 ```bash
 .venv/bin/python scripts/write_homework_result.py \
-  --work-dir "data/homework/<COURSE>/<HWID>" \
+  --work-dir "data/semesters/<TERM>/courses/<COURSE>/homework/<HWID>" \
   --status skipped \
   --course "<COURSE>" \
   --course-id "<course_id>" \
@@ -855,13 +857,13 @@ If the user pauses, write `result.json` with `status: "pipeline_ready"` and
 
 ```bash
 .venv/bin/python scripts/write_homework_result.py \
-  --work-dir "data/homework/<COURSE>/<HWID>" \
+  --work-dir "data/semesters/<TERM>/courses/<COURSE>/homework/<HWID>" \
   --status pipeline_ready \
   --course "<COURSE>" \
   --course-id "<course_id>" \
   --assignment-id "<assignment_id>" \
   --assignment-name "<assignment_name>" \
-  --deliverable "data/homework/<COURSE>/<HWID>/<pipeline_design.md|repair_pipeline_design.md>" \
+  --deliverable "data/semesters/<TERM>/courses/<COURSE>/homework/<HWID>/<pipeline_design.md|repair_pipeline_design.md>" \
   --human-review-item "Pipeline awaits user approval before task-orchestrator execution" \
   --note "pipeline generated; task-orchestrator not run" \
   --deferred-to-next-run \
@@ -894,7 +896,7 @@ After `[C5]`:
 ```markdown
 ## <COURSE> <assignment name>
 
-**Pipeline:** `data/homework/<COURSE>/<HWID>/<pipeline_design.md|repair_pipeline_design.md>`
+**Pipeline:** `data/semesters/<TERM>/courses/<COURSE>/homework/<HWID>/<pipeline_design.md|repair_pipeline_design.md>`
 **Status:** pipeline_ready / skipped / error
 **Canvas URL:** <assignment html_url, or "not available" if Canvas did not provide one>
 

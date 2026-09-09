@@ -35,7 +35,7 @@ def test_tools_treat_fallback_as_non_final_for_any_hard_requirement():
 
     assert "required_spec_constraints" in writing_helper
     assert "must not weaken" in writing_helper
-    assert "prose deliverable or stage artifact" in writing_helper
+    assert "prose deliverable" in writing_helper
     assert "required_spec_constraints" in pdf_renderer
     assert "does not satisfy" in pdf_renderer
     assert "final deliverable" in pdf_renderer
@@ -47,6 +47,6 @@ def test_architecture_docs_describe_general_no_downgrade_policy():
 
     assert "required_spec_constraints" in runtime_protocol
     assert "no-downgrade" in runtime_protocol.lower()
-    assert "required_spec_constraints" in architecture_spec
-    assert "fallback_allowed_for_final: false" in architecture_spec
-    assert "spec_compliance: true" in architecture_spec
+    assert "workspace-layout.md" in architecture_spec
+    assert "../sub-skills/tasks/do-homework.md" in architecture_spec
+    assert "do-homework-staged.md" in architecture_spec

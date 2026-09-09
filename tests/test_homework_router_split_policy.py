@@ -133,7 +133,7 @@ def test_startup_inventory_records_workbench_path():
     background = read("sub-skills/tasks/background-recon.md")
     existing = read("sub-skills/tasks/existing-work-recon.md")
 
-    assert '"work_dir": "data/homework/<COURSE>/<assignment>"' in router
+    assert '"work_dir": "data/semesters/<TERM>/courses/<COURSE>/homework/<assignment>"' in router
     assert "work_dir is missing" in background
     assert "does not match the active workbench" in background
     assert "work_dir is missing" in existing
@@ -147,7 +147,8 @@ def test_tools_index_no_longer_registers_routed_homework_stages_as_tools():
     assert OLD_RUNTIME_PATHS[2].removesuffix(".md") not in index
     assert "background-recon.md" not in index
     assert "existing-work-recon.md" not in index
-    assert "alignment-planning.md [C]" in index
+    assert "alignment-planning.md [C]" not in index
+    assert "do-homework.md" in index
 
 
 def test_active_docs_do_not_reference_retired_runtime_paths():

@@ -5,6 +5,8 @@ description: Review Canvas course changes, maintain the current semester overvie
 
 # Daily Course Review
 
+目录与身份规则见 [学习工作区规范](../../docs/workspace-layout.md)。示例中的 `<TERM>` 必须由已核对的学期元数据替换；从仓库根运行命令，Windows 使用 `.venv/Scripts/`。
+
 An agent-led course review task. Use Canvas CLI for access and the existing
 course archive for evidence. Keep the current semester's rules understandable,
 show what changed each day, and explain coverage gaps. This task defines the
@@ -116,7 +118,7 @@ existing directory's `meta.json`; create a distinct directory for a different
 identity even if its name matches. Reuse the user's designated semester report
 and journal rather than creating competing overviews.
 
-Use a dated run directory under `data/runs/<term>/<date>-course-review/`, or
+Use a dated run directory under `data/semesters/<TERM>/runs/<term>/<date>-course-review/`, or
 resume the equivalent existing run. Before writing shared state, check for an
 active run for this configuration. Join/report it or defer a duplicate trigger;
 do not run concurrent writers. Keep failed attempts visible and retry only
@@ -153,20 +155,20 @@ failures remain eligible for the next run. Preserve the user's source originals.
 Keep two user-facing documents with different purposes:
 
 - **Semester overview:** the current effective course picture, normally
-  `data/reports/<term>/学期课程与Syllabus分析.md`. Reuse its existing path/layout.
+  `data/semesters/<TERM>/reports/学期课程与Syllabus分析.md`. Reuse its existing path/layout.
   Cover grading, attendance, quizzes/exams, assignments/projects, submission and
   late-work policies, permitted AI/collaboration, course topics, key dates and
   conflicts. Cite source objects/pages and checked dates. Distinguish the original
   syllabus from later announcements/amendments; retain provenance and unresolved
   conflicts rather than silently replacing a rule based only on recency.
 - **Daily journal:** what was checked and changed today, normally
-  `data/reports/<term>/daily/<YYYY-MM-DD>.md`. If the user already uses dated
+  `data/semesters/<TERM>/reports/daily/<YYYY-MM-DD>.md`. If the user already uses dated
   sections in the overview or another journal, retain that convention. Record
   timing, scope, important changes/deadlines, downloads/notes and coverage gaps.
   Same-day reruns update the same dated entry, preserving earlier attempts and
   correcting conclusions explicitly. Do not duplicate entries or overwrite history.
 
-Retain per-course archives and indexes under `data/courses/`; raw evidence and
+Retain per-course archives and indexes under `data/semesters/<TERM>/courses/`; raw evidence and
 compact receipts may live under the run directory or `canvas_sync/`. Keep the
 overview current and the journal chronological. Even a fully unchanged run gets
 a brief daily entry and visible final message. An incomplete run is **partial**,

@@ -5,8 +5,10 @@ description: Sync course materials (lectures, readings, announcements) to persis
 
 # Sync Course
 
+目录与身份规则见 [学习工作区规范](../../docs/workspace-layout.md)。示例中的 `<TERM>` 必须由已核对的学期元数据替换；从仓库根运行命令，Windows 使用 `.venv/Scripts/`。
+
 Persistent course-level material sync. Downloads and organizes Canvas files,
-announcements, and module structure into `data/courses/<COURSE>/`.
+announcements, and module structure into `data/semesters/<TERM>/courses/<COURSE>/`.
 
 Unlike `sync-status` (which builds a homework plan), this skill builds a
 **course archive** — a reusable data store that feeds `write-course-notes` and
@@ -43,16 +45,19 @@ If either is missing, redirect to `canvascli-setup.md`. Do NOT proceed silently.
 
 ### Step 1: Discover courses
 
+Resolve the requested Canvas term and its normalized directory name before
+writing snapshots. Reuse the established course scope; ask only if ambiguous.
+
 ```bash
-mkdir -p data/sync/current
-.venv/bin/canvascli courses 2>/dev/null > data/sync/current/courses.json
+mkdir -p data/semesters/<TERM>/sync/current
+.venv/bin/canvascli courses --term "<actual Canvas term>" > data/semesters/<TERM>/sync/current/courses.json
 ```
 
-**Single-course mode**: Ask the user to confirm the course name (match from
-`data/sync/current/courses.json`). Extract `course_id`.
+**Single-course mode**: Resolve the stated course from the verified snapshot and
+extract `course_id`; ask only when the match is ambiguous.
 
-**Batch mode**: List all courses from the JSON. Use `AskUserQuestion` to let the
-user confirm which courses to sync (multi-select or "all").
+**Batch mode**: Reuse the requested all-course or selected-course scope. Resolve
+only missing scope; do not repeat confirmation already provided.
 
 ### Step 2: Sync one course (repeat per course in batch)
 
@@ -61,36 +66,21 @@ For each selected course, run steps 2a–2h.
 #### 2a. Create directory structure
 
 ```bash
-COURSE_DIR="data/courses/<COURSE_SLUG>"
+COURSE_DIR="data/semesters/<TERM>/courses/<COURSE_SLUG>"
 mkdir -p "$COURSE_DIR"/{materials/{lectures,readings,other},canvas_sync,notes}
 ```
 
-`<COURSE_SLUG>` is `course_code` uppercased and non-alphanumeric replaced with
-`-` (e.g. `COURSE1234`). If `course_code` is empty, derive from the course name.
+Preserve an existing readable `<COURSE_SLUG>` such as `AIAA3201--L02` after
+matching its Canvas instance, term and course ID. For a new course choose a safe
+readable name; append the course ID only when required to avoid a collision.
 
-#### 2b. Write meta.json
+#### 2b. Write or update meta.json
 
-```bash
-.venv/bin/python -c "
-import json, datetime
-course = json.load(open('data/sync/current/courses.json'))
-target = [c for c in (course if isinstance(course, list) else [course]) if str(c['id']) == '$COURSE_ID'][0]
-slug = (target.get('course_code') or target['name'].split(' - ')[0]).strip().upper()
-slug = ''.join(c if c.isalnum() else '-' for c in slug).strip('-')
-meta = {
-    'course_id': str(target['id']),
-    'name': target['name'],
-    'course_code': target.get('course_code', ''),
-    'term': target.get('term', ''),
-    'slug': slug,
-    'synced_at': datetime.datetime.now().astimezone().isoformat(timespec='seconds'),
-    'file_counts': {}
-}
-import pathlib; pathlib.Path('$COURSE_DIR/meta.json').parent.mkdir(parents=True, exist_ok=True)
-json.dump(meta, open('$COURSE_DIR/meta.json', 'w'), ensure_ascii=False, indent=2)
-print(f'meta.json written for {slug}')
-"
-```
+Read the existing metadata before updating. Preserve unknown fields and human
+additions. Store the exact `course_id`, course name/code, original term metadata,
+Canvas instance, selected slug, sync timestamp and useful file counts. Verify
+identity before overwriting; a same-name different-ID course is not the same
+archive. Write UTF-8 and retain actual teacher filenames.
 
 #### 2c. Fetch file listing
 
@@ -285,9 +275,9 @@ json.dump(meta, open('$COURSE_DIR/meta.json', 'w'), ensure_ascii=False, indent=2
 
 Summarize per course:
 - `<COURSE>: 新增 X 个文件, 跳过 Y 个已有文件, Z 个公告`
-- Point user to `data/courses/<COURSE>/index.md` for the overview.
+- Point user to `data/semesters/<TERM>/courses/<COURSE>/index.md` for the overview.
 
 **Safety rules:**
 - Do NOT auto-download without user confirmation of scope.
 - Do NOT delete existing files. Only add new ones.
-- Do NOT modify anything under `data/homework/`.
+- Do NOT modify anything under `data/semesters/<TERM>/courses/*/homework/`.

@@ -2,7 +2,8 @@
 
 对话保持使用中文。
 
-This repository is governed by `skill.md`. Before handling Canvas, homework,
+Read `docs/workspace-layout.md` for the canonical semester/course/homework layout.
+This learning workspace is governed by `skill.md`. Before handling Canvas, homework,
 course sync, note generation, or any `sub-skills/` workflow, read `skill.md`
 first and follow the route it selects.
 

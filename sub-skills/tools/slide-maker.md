@@ -5,10 +5,9 @@ description: Generate presentation decks. Default path uses the guizang-ppt-skil
 
 # slide-maker
 
-> In default homework, follow `sub-skills/tasks/do-homework.md`. Use this guide
-> for domain/CLI advice only. Fixed spec/pipeline inputs, stage handoffs and
-> report/output schemas below belong to legacy staged mode, not prerequisites
-> for ordinary assignments. Actual source requirements still apply.
+> Follow [do-homework](../tasks/do-homework.md) and the [workspace layout](../../docs/workspace-layout.md).
+> This is optional domain guidance. Use the actual investigation, short plan and
+> deliverables; paths and output examples below are suggestions, not required schemas.
 
 Produce a slide deck for group presentations / talks. Two paths:
 
@@ -25,11 +24,11 @@ The final renderer path is controlled by this tool contract:
 - `beamer`: final LaTeX source plus tectonic PDF export.
 
 Do not silently introduce a third final renderer path. PyMuPDF may be used only
-as a bounded repair, preview, or debug fallback when the stage brief explicitly
+as a bounded repair, preview, or debug fallback when the current task requirements explicitly
 authorizes it or when it regenerates a deliverable that still satisfies the
 selected `guizang` or `beamer` contract. PyMuPDF is not a third final renderer path by default.
 
-If a PyMuPDF repair/preview fallback is used, the stage result must record:
+If a PyMuPDF repair/preview fallback is used, the verification summary must record:
 
 - the exact render script path or inline render script;
 - the command used to run it;
@@ -52,8 +51,8 @@ passing final deliverable.
 ## Inputs / Outputs
 
 ```
-Input:  <work_dir>/spec.md               (PRIMARY: standardized reconnaissance report)
-        <work_dir>/pipeline_design.md    (slides stage, count, audience, constraints, verification plan)
+Input:  <work_dir>/investigation.md               (PRIMARY: concise investigation summary (or the existing equivalent))
+        <work_dir>/pipeline.md    (slide count, audience, constraints, verification approach)
         <work_dir>/investigation/rubric.md
         <work_dir>/references/           (fetched spec text, slides/readings, images if relevant)
         <work_dir>/problem.md            (compatibility presentation topic / brief)
@@ -70,18 +69,18 @@ Output (beamer):
         <work_dir>/slides.pdf            (tectonic, A4 or beamer 16:9)
 ```
 
-**Read `spec.md` first, then `pipeline_design.md`, rubric, references, user
+**Read `investigation.md` first, then `pipeline.md`, rubric, references, user
 supplements, and finally `problem.md`, completely.** The workbench files contain
 the presentation brief — the assigned topic, required content, length, audience,
 and supporting context. The assignment title alone (e.g. "Group presentation")
-tells you nothing. If `spec.md` says the main spec is an external document and
+tells you nothing. If `investigation.md` says the main spec is an external document and
 another module item is nearby supporting context, ground the deck in that source
 trail. Do not fall back to a generic "topic overview / methods / findings"
 template.
 
-For group presentations specifically: if `spec.md` requires the group to choose
+For group presentations specifically: if `investigation.md` requires the group to choose
 a sub-topic and the user has not specified which sub-topic, write one
-`[CLARIFICATION NEEDED: which sub-topic? options from spec.md: A / B / C]`
+`[CLARIFICATION NEEDED: which sub-topic? options from investigation.md: A / B / C]`
 marker in slide 2 and continue with the most general framing. This is surfaced
 at do-homework [E]. Do not leave `[此处由小组成员填入选题]` placeholders throughout
 the deck.
@@ -194,7 +193,7 @@ The agent writes `<work_dir>/slides.tex`:
 \usepackage{graphicx}
 \graphicspath{{./figures/}}
 
-\title{<from spec.md or pipeline_design.md>}
+\title{<from investigation.md or pipeline.md>}
 \author{}
 \date{\today}
 
@@ -239,12 +238,12 @@ documented with a source excerpt.
 
 ### guizang path
 
-1. **Ground every slide in `spec.md`, `references/`, and
-   `pipeline_design.md`.** A presentation deck that doesn't name the actual
+1. **Ground every slide in `investigation.md`, `references/`, and
+   `pipeline.md`.** A presentation deck that doesn't name the actual
    topic, doesn't engage with the assigned content, and instead leaves
    `[此处由小组成员填入选题]` / `[此处填入论点]` placeholders is failing the quality
    bar — even if the visual is pretty. Acceptable placeholder:
-   `[CLARIFICATION NEEDED: which sub-topic from spec.md options A/B/C]` (one per
+   `[CLARIFICATION NEEDED: which sub-topic from investigation.md options A/B/C]` (one per
    ambiguous decision, surfaced at do-homework [E]).
 2. **Class names are template-specific.** `h-hero` in Style A is serif (Noto Serif SC), in Style B is sans (Inter). Don't mix layouts.md and layouts-swiss.md class names.
 3. **`<title>` placeholder.** `assets/template.html` has `[必填] 替换为 PPT 标题` — replace immediately or browser tabs look broken. Grep `[必填]` after copy.

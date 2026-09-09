@@ -5,10 +5,9 @@ description: Reference for calling canvascli commands from agent flows. Use when
 
 # canvascli API reference
 
-> In default homework, follow `sub-skills/tasks/do-homework.md`. Use this guide
-> for domain/CLI advice only. Fixed spec/pipeline inputs, stage handoffs and
-> report/output schemas below belong to legacy staged mode, not prerequisites
-> for ordinary assignments. Actual source requirements still apply.
+> Follow [do-homework](../tasks/do-homework.md) and the [workspace layout](../../docs/workspace-layout.md).
+> This is optional domain guidance. Use the actual investigation, short plan and
+> deliverables; paths and output examples below are suggestions, not required schemas.
 
 `canvascli` is the external Canvas command-line tool AutoStudy depends on. Data-returning commands are JSON-by-default — that's the contract that lets agents pipe their output into `jq` / Python / further processing.
 
@@ -329,58 +328,27 @@ Submit a file to a Canvas assignment via `online_upload`.
   argument, network, and Canvas 5xx errors go to stderr without a traceback;
   branch on the exit code and save the stderr text when an audit trail is
   needed.
-- **HTTP 404 on quizzes/modules/discussions is normal** — that course turned the feature off. canvascli returns `[]` in those cases.
+- **Interpret 404 by command contract and permissions.** A failed lookup does not prove that a source or requirement does not exist.
 - **Tuples of `(datetime, dict)`** aren't sortable in Python (dict isn't comparable) — when sorting by `due_at`, always use `key=lambda x: x["due_at"]`.
 - **Filenames with Chinese / spaces are common.** Always quote paths in shell calls.
 - **`assignment.description` is HTML and often just an attachment link.** The real problem text lives in the linked PDF. See the Recipes section below.
 
 ## Recipes
 
-### Build a homework workbench before generation
+### Investigate before generation
 
-Canvas's `description` field may be an attachment link, a Google Doc link, an empty string, or only a small hint. Reading it directly is the most common cause of agents producing template / placeholder content.
+Assignment descriptions can be empty or link to the real PDF/document. Follow
+[do-homework](../tasks/do-homework.md): cover assignment/rubric, syllabus,
+announcements, front page, modules/pages, full file inventory, existing archive
+and discovered task-bearing links before filtering relevance. Use the atomic
+commands above and inspect actual content, not only filenames or counts.
 
-**Don't write your own extractor inline** — follow
-`sub-skills/tasks/background-recon.md`. It contains the Canvas Generic
-workflow, adapted to AutoStudy's CLI boundary:
-
-1. Calls atomic context commands above: `assignment`, `rubric`,
-   `front-page`, `syllabus`, `modules`, `module-items`, `page`, `file`, and
-   `assignment-files`, and `announcements`.
-2. Stores raw CLI JSON under `<work_dir>/canvas/`.
-3. Runs `reference_collector` to preserve task-relevant source evidence under
-   `<work_dir>/references/`.
-   `canvas/announcements.json` is a Stage 1 collection snapshot; Stage 2 must not
-   copy the full announcements array into
-   `references/canvas_native/announcements/source.json`. Relevant announcements
-   are saved one object per
-   `references/canvas_native/announcement-<id-or-slug>/source.json`.
-   Every `references/canvas_native/<slug>/` directory left at collector
-   completion must contain `source.json`, `source.txt`, and `ORIGIN.md`. Delete
-   candidate or renamed Canvas-native directories that do not contain the
-   complete three-file set; empty `references/canvas_native/*` directories are
-   not valid reference artifacts and must not be left for the Main Agent or user
-   to inspect.
-4. Writes `<work_dir>/spec.md` as the Main Agent reconnaissance report, not a
-   raw dump.
-5. Finds grading criteria into `<work_dir>/investigation/rubric.md`.
-6. Downloads or fetches needed inputs into `<work_dir>/references/`, and logs
-   blocked resources in `<work_dir>/investigation/unreachable.txt`.
-7. Writes `<work_dir>/investigation/review_a.json` after a cold investigation
-   review.
-8. Writes reconnaissance summaries such as
-   `<work_dir>/investigation/recon_summary.md` and
-   `<work_dir>/investigation/explore_context.md`, then keeps
-   `<work_dir>/problem.md` only as a compatibility summary for older tools.
-
-Do not use or recreate an `assignment-context` aggregate command. The mature
-pattern is atomic data access, raw CLI JSON stored under `<work_dir>/canvas/`,
-`reference_collector` preservation of task-relevant original evidence under
-`<work_dir>/references/`, and Main Agent source/spec judgment in
-`<work_dir>/spec.md`.
-Planner and downstream tools should read `spec.md`, first-stage recon artifacts,
-and then the `pipeline_design.md` or `repair_pipeline_design.md` produced by
-`alignment-planning.md`; `problem.md` is temporary compatibility.
+Reuse course originals and save a concise investigation summary with coverage,
+requirements and unresolved gaps in the assignment folder. Preserve useful
+snapshots when needed, then maintain one short `pipeline.md`. No mandatory
+reference collector, `spec.md`, stage review or separate repair pipeline is
+required. Do not recreate an aggregate `assignment-context` command; the CLI
+provides data and the agent judges source relevance and requirements.
 
 ### One-liner: list file IDs embedded in a saved assignment snapshot
 
@@ -393,7 +361,7 @@ d = json.load(open(sys.argv[1]))
 desc = d.get("description") or ""
 ids = set(re.findall(r"/files/(\d+)", desc))
 print(*sorted(ids), sep="\n")
-' data/homework/<COURSE>/<HW>/canvas/assignment.json
+' data/semesters/<TERM>/courses/<COURSE>/homework/<HW>/canvas/assignment.json
 ```
 
 ### Download a single attachment by ID with the real filename

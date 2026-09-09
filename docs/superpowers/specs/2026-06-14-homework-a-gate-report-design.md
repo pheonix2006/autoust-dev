@@ -1,3 +1,5 @@
+> 历史设计或验证记录：正文保留当时的路径、流程和结果，不作为当前初始化或运行指令。现行目录见 [学习工作区规范](../../workspace-layout.md)，默认作业流程见 [do-homework](../../../sub-skills/tasks/do-homework.md)。
+
 # Homework A Compact Findings Design
 
 > 2026-06-14 · Design update for shrinking `do-homework [A]` Main Agent context while preserving scout evidence and auditability.

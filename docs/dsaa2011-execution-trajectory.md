@@ -1,3 +1,5 @@
+> 历史设计或验证记录：正文保留当时的路径、流程和结果，不作为当前初始化或运行指令。现行目录见 [学习工作区规范](workspace-layout.md)，默认作业流程见 [do-homework](../sub-skills/tasks/do-homework.md)。
+
 # DSAA2011 子代理执行轨迹心路历程
 
 > 2026-06-03 · 从 JSONL 轨迹重建的完整行为追踪

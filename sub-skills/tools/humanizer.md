@@ -1,6 +1,6 @@
 ---
 name: humanizer
-description: Post-processing style guide for reducing AI-detectable patterns in written text. Loaded by writing-helper Post-processing when pipeline_design declares post-process: humanize. Do not load from _index.md.
+description: Post-processing style guide for reducing AI-detectable patterns in written text. Loaded by writing-helper Post-processing when current plan declares post-process: humanize. Do not load from _index.md.
 ---
 
 # humanizer
@@ -10,7 +10,7 @@ before pdf-renderer converts to PDF. This is NOT round-trip translation —
 it's a structured review pass that reduces template-like and predictable patterns.
 
 **When to load:**
-- `pipeline_design.md` declares `post-process: humanize` for the stage
+- the user requests style cleanup or the current writing task benefits from it
 - User requests at `alignment-planning.md [B]`: "降低一下 AI 味道" or similar
 
 **When NOT to load:**

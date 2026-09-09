@@ -1,6 +1,12 @@
+> 历史设计或验证记录：正文保留当时的路径、流程和结果，不作为当前初始化或运行指令。现行目录见 [学习工作区规范](../workspace-layout.md)，默认作业流程见 [do-homework](../../sub-skills/tasks/do-homework.md)。
+
 # Agent Progress
 
 > Session-by-session handoff log. Newest entries on top. Anyone (including a future Claude session) reading this should be able to pick up cleanly.
+
+## 2026-09-09 - Semester learning workspace
+
+Adopted the semester/course/homework layout in `docs/workspace-layout.md`; updated README/bootstrap/task/tool/development guidance and marked historical designs. Scan and selection helpers now require an explicit semester and verify course metadata before choosing a work directory. Local archives, links, helper paths and the existing scheduled entry were migrated with private receipts; the archive itself remains Git-ignored. Validation: 57 regression tests on Python 3.13, offline archived-snapshot selection, local link/content checks, and existing coursework tests. See `docs/verification/2026-09-09/semester-workspace.md`. The user authorized committing and publishing this layout to the personal fork main branch; pre-existing output/ and tmp/ remain outside scope.
 
 ## 2026-09-09 - Daily course review task
 

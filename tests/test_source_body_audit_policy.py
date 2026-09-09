@@ -185,7 +185,7 @@ def test_reference_collector_dispatch_is_auditable():
     assert '"transcript_handle"' in policy_text
 
 
-def test_entry_docs_describe_reference_collector_not_old_source_scout_chain():
+def test_legacy_recon_preserves_source_index_without_old_scout_chain():
     entry_text = "\n".join(
         [
             read("README.md"),
@@ -198,10 +198,11 @@ def test_entry_docs_describe_reference_collector_not_old_source_scout_chain():
     )
     normalized_entry_text = normalize_ws(entry_text)
 
-    assert "reference_collector" in entry_text
-    assert "references/REFERENCE_INDEX.md" in entry_text
-    assert "references/canvas_native/announcement-<id-or-slug>/source.json" in entry_text
-    assert "canvas/announcements.json#id=" in entry_text
+    legacy_recon = read("sub-skills/tasks/background-recon.md")
+    assert "reference_collector" in legacy_recon
+    assert "references/REFERENCE_INDEX.md" in legacy_recon
+    assert "references/canvas_native/announcement-<id-or-slug>/source.json" in legacy_recon
+    assert "canvas/announcements.json#id=" in legacy_recon
     assert "metadata_scout builds the source index" not in normalized_entry_text
     assert "content_scout reads assigned source bodies" not in normalized_entry_text
     assert "source_findings.compact.md` as normal" not in normalized_entry_text

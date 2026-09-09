@@ -1,3 +1,5 @@
+> 仅供用户明确选择的历史分阶段审计模式使用；普通作业不加载本协议。现行目录见 [学习工作区规范](workspace-layout.md)。
+
 # Inspectable Subagent Transcript Harness
 
 This document defines the development-validation harness for child transcript

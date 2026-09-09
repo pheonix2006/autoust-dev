@@ -1,7 +1,8 @@
 """Write the per-assignment AutoStudy result.json state receipt.
 
-This script intentionally records workflow state only. Reconnaissance evidence
-stays in spec.md, problem.md, and investigation/review_a.json.
+This optional compatibility helper records workflow state only. Source evidence
+and the concise investigation summary stay in the assignment workspace; legacy
+spec.md, problem.md and review_a.json files are read when present.
 """
 from __future__ import annotations
 

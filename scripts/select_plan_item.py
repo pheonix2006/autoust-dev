@@ -1,6 +1,6 @@
 """Select one actionable item from an AutoStudy scan plan.
 
-The script is intentionally local-only: it reads data/runs/<date>/plan.json and
+The script is intentionally local-only: it reads semester-scoped runs/<date>/plan.json and
 pending_assignments.json, then prints the selected assignment identity for
 do-homework. It does not call Canvas, run reconnaissance, or write result.json.
 """
@@ -14,11 +14,19 @@ from pathlib import Path
 from typing import Any
 
 
+try:
+    from .workspace_paths import semester_dir
+except ImportError:
+    from workspace_paths import semester_dir
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--index", type=int, required=True, help="1-based plan item index to select.")
     parser.add_argument("--date", help="Run date in YYYY-MM-DD; defaults to local today.")
-    parser.add_argument("--runs-dir", default=Path("data/runs"), type=Path)
+    parser.add_argument("--term", help="Required unless --runs-dir explicitly selects a run root.")
+    parser.add_argument("--data-dir", default=Path("data"), type=Path)
+    parser.add_argument("--runs-dir", type=Path)
     parser.add_argument("--pretty", action="store_true", help="Pretty-print JSON output.")
     return parser.parse_args()
 
@@ -98,6 +106,7 @@ def build_selection(date: str, plan_item: dict[str, Any], pending_item: dict[str
 
     return {
         "run_date": date,
+        "term": merged.get("term"),
         "index": merged.get("index"),
         "course": merged.get("course"),
         "course_id": cid,
@@ -127,6 +136,10 @@ def main() -> int:
     date = ns.date or local_date()
     try:
         dt.date.fromisoformat(date)
+        if ns.runs_dir is None:
+            if not ns.term:
+                raise ValueError("provide --term or an explicit --runs-dir; semester is never guessed")
+            ns.runs_dir = semester_dir(ns.data_dir, ns.term) / "runs"
         run_dir = ns.runs_dir / date
         plan_path = run_dir / "plan.json"
         pending_path = run_dir / "pending_assignments.json"
@@ -135,6 +148,13 @@ def main() -> int:
         plan_item = find_plan_item(plan, ns.index)
         pending_item = find_pending_item(pending_doc, plan_item)
         selection = build_selection(date, plan_item, pending_item)
+        selected_term = selection.get("term") or plan.get("term")
+        if ns.term:
+            expected_term = semester_dir(ns.data_dir, ns.term).name
+            if selected_term and selected_term != expected_term:
+                raise ValueError("selected plan belongs to a different semester")
+            selected_term = expected_term
+        selection["term"] = selected_term
     except Exception as exc:
         print(f"select_plan_item failed: {exc}", file=sys.stderr)
         return 2

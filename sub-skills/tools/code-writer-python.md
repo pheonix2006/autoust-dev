@@ -61,7 +61,7 @@ and notebooks in `draft/`.
   This lets `writing-helper.md` reference images as
   `![...](figures/tsne_2d.png)` from `draft/report.md`, and keeps packages from
   filling with unorganized top-level PNG files. If a course explicitly requires
-  flat files in the final zip, add a packaging stage that flattens or copies
+  flat files in the final zip, add a packaging step that flattens or copies
   files intentionally rather than changing the working draft layout.
 
 ## pytest conventions
@@ -70,7 +70,7 @@ and notebooks in `draft/`.
 - Use `@pytest.mark.parametrize` for data-driven tests from spec
 - Use `pytest.skip` with reason for unimplemented parts (with `[CLARIFICATION NEEDED]` comment)
 - Fixtures for shared setup (datasets, temp directories)
-- All tests must pass for the stage to be considered complete
+- All applicable checks must pass before claiming the work is verified
 
 ## Common pitfalls (Python-specific)
 
@@ -81,5 +81,5 @@ and notebooks in `draft/`.
 5. **Don't add `print()` debug statements** — auto-graders parse stdout
 6. **Function names follow spec verbatim** — if spec says `fit_ols(X, y)`, don't write `train_ordinary_least_squares(X, y)`
 7. **Flat plot dumps break report composition.** If plots are saved as
-   `draft/*.png`, later prose stages may miss them. Use `draft/figures/` unless
+   `draft/*.png`, later prose work may miss them. Use `draft/figures/` unless
    the assignment says otherwise.

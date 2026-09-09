@@ -1,3 +1,5 @@
+> 历史设计或验证记录：正文保留当时的路径、流程和结果，不作为当前初始化或运行指令。现行目录见 [学习工作区规范](workspace-layout.md)，默认作业流程见 [do-homework](../sub-skills/tasks/do-homework.md)。
+
 我现在想要在hkustgz的语境下做一个项目，参考这个仓库，最终以skill的形式呈现：https://github.com/ICUlizhi/AutoPku
 
 我希望我们最终也是以skill的形式，可以让大家直接就在claudecode或者codex上load这个skill。

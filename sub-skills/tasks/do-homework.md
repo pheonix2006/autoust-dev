@@ -5,14 +5,18 @@ description: Investigate an assignment comprehensively, preserve its requirement
 
 # Do Homework
 
+目录与身份规则见 [学习工作区规范](../../docs/workspace-layout.md)。示例中的 `<TERM>` 必须由已核对的学期元数据替换；从仓库根运行命令，Windows 使用 `.venv/Scripts/`。
+
 Investigate broadly before deciding which information matters. Then keep execution
 simple: a short plan, useful deliverables and appropriate verification. New work,
 continuation, feedback and repairs all use this same workflow.
 
 ## One assignment folder
 
-Create or reuse `data/homework/<COURSE>/<assignment>/`, or the user/selector's
-existing folder. Preserve exact course and assignment IDs when available. Inspect
+Create or reuse `data/semesters/<TERM>/courses/<COURSE>/homework/<assignment>/`, or the user/selector's
+existing folder. Resolve the actual term and verify course identity before writing;
+new folders follow the canonical layout, while a user-directed external submission
+folder is an explicit exception. Preserve exact course and assignment IDs when available. Inspect
 existing deliverables before editing them. The instructor's submission structure
 and the user's chosen layout take precedence over local folder conventions.
 
@@ -101,9 +105,9 @@ Do not replace them with a different mandatory set of process files. Existing
 process files are historical evidence, not instructions to restart stages; leave
 them intact unless cleanup is requested. No separate repair workflow is needed.
 
-Optional tool guides provide domain advice. Their legacy spec/pipeline/stage
-prerequisites, fixed output paths and mandatory report schemas do not apply here;
-use actual source material, the investigation and the current short plan instead.
+Optional tool guides provide domain advice using actual source material, the
+investigation and current short plan. Their example paths and outputs are suggestions;
+choose files that serve the real submission and project structure.
 `result.json` remains optional for old scan/status integration. Without it the
 scanner may not know draft progress; inspect the folder rather than assuming no
 work exists. Never invent submitted/graded state.

@@ -27,7 +27,7 @@ Output: path/to/document.pdf
         + render provenance under path/to/render/ when practical
 ```
 
-If the assignment or `pipeline_design.md` declares `required_spec_constraints`,
+If the assignment or `pipeline.md` declares `required_spec_constraints`,
 the input must include the evidence needed to satisfy those exact constraints,
 or an explicit blocker receipt explaining why they are unavailable. A fallback
 renderer can produce a preview/debug artifact, but it does not satisfy the final
@@ -132,12 +132,12 @@ pandoc INPUT.md \
   -V geometry:margin=1in
 ```
 
-Record the exact engine path in the stage receipt, e.g. `pandoc+xelatex` or
+Record the exact engine path in the verification notes, e.g. `pandoc+xelatex` or
 `pandoc->tectonic`, plus whether TeX/log sidecars were preserved. For
 development validation and final deliverable PDFs, preserve the log sidecar
-under `draft/render/` when the renderer exposes one and the stage has permission
+under `draft/render/` when the renderer exposes one and the task is authorized
 to copy it. If the engine does not expose a log under the allowed write set, or
-the stage intentionally records only a warning summary, record that reason in
+the task intentionally records only a warning summary, record that reason in
 render provenance. Do not leave a reviewer guessing why no `.tex` or `.log`
 file exists.
 
@@ -242,7 +242,7 @@ pandoc INPUT.md \
 
 ### Python helper (for orchestrator to call programmatically)
 
-When the orchestrator wants to render a PDF inside its own pipeline, drop this snippet into a working file under `data/homework/<course>/<hw>/` and run it:
+When the orchestrator wants to render a PDF inside its own pipeline, drop this snippet into a working file under `data/semesters/<TERM>/courses/<course>/homework/<hw>/` and run it:
 
 ```python
 import subprocess
@@ -275,7 +275,7 @@ def render_pdf(md_path, pdf_path, *, with_callouts=False, font="PingFang SC"):
     return pdf_path
 
 # Example
-render_pdf("draft.md", "data/homework/DSAA2043/hw3/final.pdf")
+render_pdf("draft.md", "data/semesters/<TERM>/courses/DSAA2043/homework/hw3/final.pdf")
 ```
 
 ## Post-processing (fallback chain)

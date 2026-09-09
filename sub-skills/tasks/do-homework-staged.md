@@ -5,6 +5,8 @@ description: Explicit opt-in legacy homework planning workflow. Use when the use
 
 # Do Homework
 
+目录与身份规则见 [学习工作区规范](../../docs/workspace-layout.md)。示例中的 `<TERM>` 必须由已核对的学期元数据替换；从仓库根运行命令，Windows 使用 `.venv/Scripts/`。
+
 > Legacy staged mode only. Load this workflow only when the user explicitly
 > requests it. Ordinary homework uses `sub-skills/tasks/do-homework.md`; existing
 > process files and task complexity do not enable this mode.
@@ -51,7 +53,7 @@ and record the accepted route:
 
 ```json
 {
-  "work_dir": "data/homework/<COURSE>/<assignment>",
+  "work_dir": "data/semesters/<TERM>/courses/<COURSE>/homework/<assignment>",
   "entry_preset": "clean_start | retained_artifact_start",
   "route": "background-recon.md | existing-work-recon.md",
   "recommended_action": "recon | review_or_execute | review_or_submit | continue",

@@ -1,3 +1,5 @@
+> 历史排障记录：以下现象、命令与机器路径保留发生时的语境。当前初始化以 [setup](../sub-skills/tools/canvascli-setup.md) 为准，数据布局以 [学习工作区规范](workspace-layout.md) 为准，勿将旧登录、代理或克隆方法直接作为默认操作。
+
 # AutoStudy 踩坑记录
 
 > 把这一轮搭抓取器时遇到的真实问题记下来，避免下次（或者别人接手时）重蹈覆辙。
@@ -323,9 +325,9 @@ def safe_name(s):
 
 ```
 ~/Library/Application Support/canvascli/state.json  # Canvas 登录态（绝对不能进 git）
-data/sync/current/*.json                            # 最近一次 sync-status 当前快照
-data/runs/<date>/raw/*.json                         # 某次 scan-plan 使用过的快照副本
-data/courses/<course>/materials/...                 # 下载的课件
+data/semesters/<TERM>/sync/current/*.json                            # 最近一次 sync-status 当前快照
+data/semesters/<TERM>/runs/<date>/raw/*.json                         # 某次 scan-plan 使用过的快照副本
+data/semesters/<TERM>/courses/<course>/materials/...                 # 下载的课件
 .venv/                                              # python 虚拟环境
 ```
 

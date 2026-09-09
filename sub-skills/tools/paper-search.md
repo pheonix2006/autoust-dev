@@ -14,7 +14,7 @@ Find references for a paper-writing task. Uses the `arxiv` Python package (insta
 ## Inputs / Outputs
 
 ```
-Input:  topic keywords (list of strings, from spec.md or pipeline_design.md)
+Input:  topic keywords (list of strings, from investigation.md or pipeline.md)
         max_results: int (default 5)
 Output: <work_dir>/references.bib    (BibTeX, one @article per result)
         <work_dir>/references.json   (parallel JSON: [{key, title, authors, year, url, summary}, ...])
@@ -22,8 +22,8 @@ Output: <work_dir>/references.bib    (BibTeX, one @article per result)
 
 Pick keywords only after reading the workbench:
 
-- `<work_dir>/spec.md` for the real assignment topic and source trail.
-- `<work_dir>/pipeline_design.md` for whether a literature-search stage is
+- `<work_dir>/investigation.md` for the real assignment topic and source trail.
+- `<work_dir>/pipeline.md` for whether literature search is
   actually needed.
 - `<work_dir>/investigation/rubric.md` for required citation scope or style.
 - `<work_dir>/references/` for the assigned paper/readings, if any.
@@ -44,7 +44,7 @@ No API key required. The `arxiv` package wraps the public arxiv export.arxiv.org
 
 The orchestrator writes a small script into
 `<work_dir>/scripts/run_paper_search.py` and executes it. The `QUERY` value
-comes from `pipeline_design.md` or a clearly grounded topic in `spec.md`.
+comes from `pipeline.md` or a clearly grounded topic in `investigation.md`.
 Template:
 
 ```python

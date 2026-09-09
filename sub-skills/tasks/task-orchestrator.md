@@ -5,6 +5,8 @@ description: Execute an approved per-assignment pipeline from a workbench contai
 
 # task-orchestrator
 
+目录与身份规则见 [学习工作区规范](../../docs/workspace-layout.md)。示例中的 `<TERM>` 必须由已核对的学期元数据替换；从仓库根运行命令，Windows 使用 `.venv/Scripts/`。
+
 > Legacy staged mode only. Load this workflow only when the user explicitly
 > requests it. Ordinary homework uses `sub-skills/tasks/do-homework.md`; existing
 > process files and task complexity do not enable this mode.
@@ -184,8 +186,11 @@ orchestrator reads and executes it. Do not redesign the format here.
    current run intentionally wrote `repair_pipeline_design.md`, use that.
 2. Read the chosen execution plan and look for `repo_root:` in the metadata section.
 3. If found, set `SKILLS_DIR = repo_root + "/sub-skills/tools/"`
-4. If not found, infer: `REPO_ROOT = WORK_DIR/../../..` (3 levels up from data/homework/COURSE/HWID)
-5. If inference fails, run: `git -C "$WORK_DIR" rev-parse --show-toplevel`
+4. If absent, use an explicitly supplied AutoStudy root, or locate an ancestor
+   containing both `skill.md` and `scripts/`; validate before using it.
+5. `git -C "$WORK_DIR" rev-parse --show-toplevel` can help locate a candidate,
+   but nested homework repositories may have their own Git root. Never use a
+   fixed number of parent directories to infer the AutoStudy root.
 6. All skill file references use `SKILLS_DIR` as the base path
 
 The `_index.md` is at `SKILLS_DIR/_index.md`.
@@ -695,15 +700,15 @@ Return a structured summary to the caller:
 status: success | partial | failed
 output_mode: mixed
 deliverables_produced:
-  - path: data/homework/<COURSE>/<HWID>/draft/<file>
+  - path: data/semesters/<TERM>/courses/<COURSE>/homework/<HWID>/draft/<file>
     size_bytes: 245678
     format: pdf
 intermediates:
-  - data/homework/<COURSE>/<HWID>/draft/draft.md
+  - data/semesters/<TERM>/courses/<COURSE>/homework/<HWID>/draft/draft.md
 tools_used:
   - writing-helper
   - pdf-renderer
-verification_log_path: data/homework/<COURSE>/<HWID>/verification.log
+verification_log_path: data/semesters/<TERM>/courses/<COURSE>/homework/<HWID>/verification.log
 human_review_items:
   - "Group ID needs to be filled in before submission"
 failures: []

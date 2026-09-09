@@ -1,5 +1,23 @@
 [
   {
+    "id": "SEMESTER-LEARNING-WORKSPACE",
+    "category": "workspace",
+    "priority": "P1",
+    "description": "Semester-scoped course archives and course-owned homework, with consistent agent guidance and explicit path identity checks.",
+    "acceptance": [
+      "Keep existing materials/canvas_sync/notes names; place homework inside each course",
+      "Require explicit semester for scan and selection; reject mismatched course metadata",
+      "Preserve historical artifacts and keep private migration receipts outside Git",
+      "Update documentation, script defaults, links and existing schedule paths together"
+    ],
+    "evidence": [
+      "57 regression tests on Python 3.13 passed",
+      "Offline archive scan and selection resolved the migrated existing homework directory",
+      "See docs/verification/2026-09-09/semester-workspace.md"
+    ],
+    "status": "passing"
+  },
+  {
     "id": "DAILY-COURSE-REVIEW",
     "category": "skill-task",
     "priority": "P1",

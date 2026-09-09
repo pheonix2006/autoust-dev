@@ -5,6 +5,8 @@ description: retained draft, repair, review, and continue state reconnaissance
 
 # Existing Work Recon
 
+目录与身份规则见 [学习工作区规范](../../docs/workspace-layout.md)。示例中的 `<TERM>` 必须由已核对的学期元数据替换；从仓库根运行命令，Windows 使用 `.venv/Scripts/`。
+
 > Legacy staged mode only. Load this workflow only when the user explicitly
 > requests it. Ordinary homework uses `sub-skills/tasks/do-homework.md`; existing
 > process files and task complexity do not enable this mode.

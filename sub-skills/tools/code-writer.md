@@ -5,45 +5,34 @@ description: Write source code from assignment spec. Provides domain guidance fo
 
 # code-writer
 
-> In default homework, follow `sub-skills/tasks/do-homework.md`. Use this guide
-> for domain/CLI advice only. Fixed spec/pipeline inputs, stage handoffs and
-> report/output schemas below belong to legacy staged mode, not prerequisites
-> for ordinary assignments. Actual source requirements still apply.
+> Follow [do-homework](../tasks/do-homework.md) and the [workspace layout](../../docs/workspace-layout.md).
+> This is optional domain guidance. Use the actual investigation, short plan and
+> deliverables; paths and output examples below are suggestions, not required schemas.
 
 Code generation workhorse. Reads the assignment workbench and writes source
 files into `<work_dir>/src/`. This file provides cross-language guidance;
 language-specific conventions (project structure, testing, toolchain) are
-in appendix files loaded based on `pipeline_design.md` stage declarations.
+in appendix files loaded according to the task language.
 
 **Skills provide reference guidance, not hard constraints.** If the task spec
 explicitly requires a different approach, follow the spec.
 
-## Contract
+## Inputs and outputs
 
-- **reads:**
-  - `spec.md` (PRIMARY — standardized reconnaissance report)
-  - `pipeline_design.md` (code stage, deliverables, constraints)
-  - `investigation/rubric.md`
-  - `references/` (starter code, data, spec PDFs/text)
-  - `problem.md` (compatibility; read after spec.md)
-  - `investigation/user_notes.md` (optional)
-  - `investigation/user_scope.md` (optional)
-- **writes:**
-  - `src/<module>.py` (or .cpp/.java per lang)
-  - `src/test_<module>.py` (pytest-style or equivalent)
-  - `src/README.md`
-- **preconditions:**
-  - `spec.md` and `pipeline_design.md` must exist and contain actual content
-  - Language must be determined (default: Python)
+Read the actual source requirements, rubric, concise investigation summary and
+current `pipeline.md`, plus relevant originals and existing deliverables. Reuse
+verified evidence; no standardized spec file or stage declaration is required.
+Write to the assignment folder using its real submission/project structure.
+Suggested filenames below may be adapted to that structure.
 
 ## Guidance
 
 ### Parse the spec from the workbench
 
-Read `spec.md`, `pipeline_design.md`, rubric, and references end-to-end.
+Read `investigation.md`, `pipeline.md`, rubric, and references end-to-end.
 Identify:
 
-- **Language**: Python is default. Record in pipeline_design.md if not already there.
+- **Language**: Python is default. Record in pipeline.md if not already there.
 - **Required functions / classes / entry points**: look for "implement", "complete",
   function signatures. Use those exact names — auto-graders match by name.
 - **I/O contract**: input format, expected output, datasets.
@@ -74,9 +63,9 @@ Style rules (defaults — spec overrides if it says otherwise):
 
 ### Write the tests
 
-For every public function, at least one pytest test. Tests in `src/test_<module>.py`.
-One assertion per test where possible. Use `@pytest.mark.parametrize` for spec-provided
-input/output pairs.
+Test meaningful behavior, required examples and edge cases appropriate to the change.
+Avoid implementation-mirroring tests and do not add tests for trivial reversible edits.
+Use the project's existing test organization where available.
 
 ### Write the README
 
@@ -96,12 +85,12 @@ toolchain-specific conventions (project structure, dependency management, testin
 
 - Hand off to `test-runner.md` to verify code passes its own tests
 - If the assignment also asks for a report, `writing-helper.md` drafts prose next
-- If `pipeline_design.md` declares `post-process: humanize` for code comments,
+- If `pipeline.md` declares `post-process: humanize` for code comments,
   load `humanizer.md`
 
 ## Self-check
 
-- [ ] `spec.md` and `pipeline_design.md` were read completely (not just title)
+- [ ] `investigation.md` and `pipeline.md` were read completely (not just title)
 - [ ] Code implements what the spec asks, not a generic equivalent
 - [ ] All required functions/classes from spec are implemented with exact names
 - [ ] Code can run in a clean environment without errors
@@ -109,5 +98,5 @@ toolchain-specific conventions (project structure, dependency management, testin
 - [ ] Report data metrics come from actual execution results
 - [ ] No `[TODO]` / `[PROBLEM N]` / `[此处填入...]` placeholders
 - [ ] Only `[CITATION NEEDED]` and `[CLARIFICATION NEEDED]` markers used
-- [ ] Tests exist for every public function
+- [ ] Relevant behavioral checks pass and cover required cases
 - [ ] README explains how to run and expected output

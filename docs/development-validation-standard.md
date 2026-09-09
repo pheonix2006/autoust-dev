@@ -1,3 +1,5 @@
+> 仅供用户明确选择的历史分阶段审计模式使用；普通作业不加载本协议。现行目录见 [学习工作区规范](workspace-layout.md)。
+
 # Development Validation Standard
 
 This document defines the standard workflow for development-stage runtime
@@ -150,9 +152,9 @@ Before the coordinator is dispatched:
 The startup inventory must include:
 
 ```bash
-find data/homework/<COURSE>/<assignment> -maxdepth 2 -type f | sort
-find data/homework/<COURSE>/<assignment> -maxdepth 2 -type d | sort
-find data/homework/<COURSE>/<assignment>/archive/<iteration-id> -maxdepth 2 -type f | sort
+find data/semesters/<TERM>/courses/<COURSE>/homework/<assignment> -maxdepth 2 -type f | sort
+find data/semesters/<TERM>/courses/<COURSE>/homework/<assignment> -maxdepth 2 -type d | sort
+find data/semesters/<TERM>/courses/<COURSE>/homework/<assignment>/archive/<iteration-id> -maxdepth 2 -type f | sort
 ```
 
 Expected for `entry_preset: clean_start`: the active workbench contains no
@@ -168,7 +170,7 @@ The structured inventory should include:
   "iteration_id": "<iteration-id>",
   "declared_mode": "full_flow | repair_flow",
   "entry_preset": "clean_start | retained_artifact_start",
-  "workbench": "data/homework/<COURSE>/<assignment>",
+  "workbench": "data/semesters/<TERM>/courses/<COURSE>/homework/<assignment>",
   "human_review_accepted": true,
   "active_files_before_launch": [],
   "active_dirs_before_launch": [],
@@ -284,11 +286,11 @@ absolute-path searches whose glob exclusions may fail to match nested
 `archive/` paths. Safe patterns are:
 
 ```bash
-cd data/homework/<COURSE>/<assignment>
+cd data/semesters/<TERM>/courses/<COURSE>/homework/<assignment>
 rg -n "submit|canvas" . --glob '!archive/**'
 
-find data/homework/<COURSE>/<assignment> \
-  -path 'data/homework/<COURSE>/<assignment>/archive' -prune -o \
+find data/semesters/<TERM>/courses/<COURSE>/homework/<assignment> \
+  -path 'data/semesters/<TERM>/courses/<COURSE>/homework/<assignment>/archive' -prune -o \
   -type f -print
 ```
 

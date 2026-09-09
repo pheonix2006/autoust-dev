@@ -16,8 +16,15 @@ import json
 import os
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
+
+
+try:
+    from .workspace_paths import semester_dir, course_directory
+except ImportError:
+    from workspace_paths import semester_dir, course_directory
 
 
 TERMINAL_CANVAS_STATES = {"submitted", "graded"}
@@ -27,11 +34,14 @@ LOCAL_TZ = dt.datetime.now(dt.timezone.utc).astimezone().tzinfo
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--assignments-json", default=Path("data/sync/current/assignments.json"), type=Path)
-    parser.add_argument("--courses-json", default=Path("data/sync/current/courses.json"), type=Path)
-    parser.add_argument("--announcements-json", default=Path("data/sync/current/announcements.json"), type=Path)
-    parser.add_argument("--homework-dir", default=Path("data/homework"), type=Path)
-    parser.add_argument("--runs-dir", default=Path("data/runs"), type=Path)
+    parser.add_argument("--term", required=True, help="Explicit semester, e.g. 2026-27-Fall.")
+    parser.add_argument("--data-dir", default=Path("data"), type=Path)
+    parser.add_argument("--assignments-json", type=Path)
+    parser.add_argument("--courses-json", type=Path)
+    parser.add_argument("--announcements-json", type=Path)
+    parser.add_argument("--courses-dir", type=Path, help="Course root; defaults to this semester's courses/.")
+    parser.add_argument("--homework-dir", type=Path, help="Optional legacy result lookup root (read only).")
+    parser.add_argument("--runs-dir", type=Path)
     parser.add_argument("--date", help="Run date in YYYY-MM-DD; defaults to local today.")
     parser.add_argument(
         "--include-terminal-canvas",
@@ -255,7 +265,10 @@ def build_pending(ns: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
     assignments = ensure_list(load_json(ns.assignments_json, []), "assignments")
     courses = ensure_list(load_json(ns.courses_json, []), "courses")
     courses_by_id = {str(course.get("id")): course for course in courses if course.get("id") is not None}
-    results = collect_results(ns.homework_dir)
+    title_counts = Counter((course_id(raw), slugish(str(raw.get("name") or raw.get("assignment_name") or assignment_id(raw)))) for raw in assignments)
+    results = collect_results(ns.homework_dir) if ns.homework_dir else {}
+    for homework_dir in ns.courses_dir.glob("*/homework"):
+        results.update(collect_results(homework_dir))
     now = dt.datetime.now(dt.timezone.utc).astimezone()
 
     pending: list[dict[str, Any]] = []
@@ -267,6 +280,20 @@ def build_pending(ns: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
         if cid is None or aid is None:
             skipped_counts["missing_id"] = skipped_counts.get("missing_id", 0) + 1
             continue
+        if not re.fullmatch(r"[A-Za-z0-9_-]+", aid):
+            raise ValueError(f"invalid assignment_id: {aid}")
+        course = courses_by_id.get(cid)
+        if course is None:
+            raise ValueError(f"course_id {cid} is missing from courses snapshot; refresh the scoped snapshots")
+        declared_term = (course or {}).get("term")
+        if isinstance(declared_term, dict):
+            declared_term = declared_term.get("name")
+        if isinstance(declared_term, str) and declared_term.strip():
+            if semester_dir(ns.data_dir, declared_term).name != ns.term:
+                skipped_counts["other_semester"] = skipped_counts.get("other_semester", 0) + 1
+                continue
+        short = course_short(course, raw.get("course_name") or course.get("name"))
+        homework_root = course_directory(ns.courses_dir, cid, short, ns.term) / "homework"
         key = f"{cid}:{aid}"
         result = results.get(key)
         parsed_due = parse_dt(raw.get("due_at"))
@@ -281,6 +308,20 @@ def build_pending(ns: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
         course_name = raw.get("course_name") or (course or {}).get("name")
         short = course_short(course, course_name)
         result_status = result.get("status") if result else None
+        assignment_slug = slugish(str(raw.get("name") or raw.get("assignment_name") or aid))
+        work_dir = homework_root / assignment_slug
+        if result:
+            existing = Path(result["_path"]).parent
+            if existing.parent.resolve() == homework_root.resolve():
+                work_dir = existing
+        # A legacy title-only folder can be reused. New names include the Canvas
+        # assignment ID so two identically titled assignments never collide.
+        if not work_dir.exists() or (title_counts[(cid, assignment_slug)] > 1 and not (work_dir / "result.json").exists()):
+            work_dir = homework_root / f"{assignment_slug}--{aid}"
+        elif (work_dir / "result.json").exists():
+            receipt = load_json(work_dir / "result.json", {})
+            if str(receipt.get("assignment_id")) != aid:
+                work_dir = homework_root / f"{assignment_slug}--{aid}"
 
         pending.append(
             {
@@ -302,7 +343,8 @@ def build_pending(ns: argparse.Namespace) -> tuple[list[dict[str, Any]], dict[st
                 "existing_result_path": result.get("_path") if result else None,
                 "recommended_action": action,
                 "reason": action_reason,
-                "suggested_work_dir": f"data/homework/{slugish(short).upper()}/{slugish(str(raw.get('name') or aid))}",
+                "suggested_work_dir": work_dir.as_posix(),
+                "term": ns.term,
             }
         )
 
@@ -319,6 +361,8 @@ def build_plan(pending: list[dict[str, Any]]) -> dict[str, Any]:
                 "index": index,
                 "bucket": item["bucket"],
                 "priority": priority_for(item["bucket"], action),
+                "term": item.get("term"),
+                "suggested_work_dir": item.get("suggested_work_dir"),
                 "course": item["course"],
                 "course_id": item["course_id"],
                 "course_name": item["course_name"],
@@ -403,6 +447,16 @@ def render_report(pending: list[dict[str, Any]], skipped_counts: dict[str, int])
 def main() -> int:
     ns = parse_args()
     try:
+        semester = semester_dir(ns.data_dir, ns.term)
+        ns.term = semester.name
+        ns.courses_dir = ns.courses_dir or semester / "courses"
+        ns.runs_dir = ns.runs_dir or semester / "runs"
+        for kind in ("assignments", "courses", "announcements"):
+            field = f"{kind}_json"
+            setattr(ns, field, getattr(ns, field) or semester / "sync" / "current" / f"{kind}.json")
+        for required in (ns.assignments_json, ns.courses_json):
+            if not required.is_file():
+                raise ValueError(f"missing required snapshot: {required}")
         date = run_date(ns)
         out_dir = ns.runs_dir / date
         pending, skipped_counts = build_pending(ns)
@@ -411,11 +465,13 @@ def main() -> int:
         metadata = {
             "generated_at": plan["generated_at"],
             "run_date": date,
+            "term": ns.term,
             "source": {
                 "assignments_json": ns.assignments_json.as_posix(),
                 "courses_json": ns.courses_json.as_posix(),
                 "announcements_json": ns.announcements_json.as_posix(),
-                "homework_dir": ns.homework_dir.as_posix(),
+                "courses_dir": ns.courses_dir.as_posix(),
+                "legacy_homework_dir": ns.homework_dir.as_posix() if ns.homework_dir else None,
             },
             "counts": {
                 "pending": len(pending),

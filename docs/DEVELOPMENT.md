@@ -1,126 +1,24 @@
 # AutoStudy Development Guide
 
-> Current homework default (2026-09-08): use `sub-skills/tasks/do-homework.md`.
-> Complete course-source investigation before relevance filtering, a concise
-> investigation summary and short plan, then free execution. No stage paperwork,
-> phase approvals or separate repair pipelines. Contracts below describe legacy mode;
-> they do not govern ordinary homework or override the current entrypoint.
+AutoStudy 是多学期、多课程学习工作区。首先阅读 [目录规范](workspace-layout.md) 和 [运行入口](../skill.md)。默认作业行为由 [do-homework](../sub-skills/tasks/do-homework.md) 定义。
 
-> Entry + constraints for **developers** of AutoStudy. If you're using AutoStudy
-> as a skill (i.e. you're an end-user agent loading it to do Canvas tasks), read
-> [skill.md](../skill.md) instead.
+## 仓库职责
 
-## Who reads this
+同一学习项目中的 `canvascli/` 与 `autoust-dev/` 是独立 Git 仓库。Canvas 登录、自动续签、分页与 API 契约属于 Canvas CLI；来源调查、目录归档、状态报告和按需任务指引属于 AutoStudy。优先把同级 Canvas CLI 以 editable 方式安装到 AutoStudy 的 `.venv/`，避免开发时运行旧版本。
 
-This file is for the next person (or agent) who picks up AutoStudy development — extending tasks, adding tools, fixing bugs. Two different audiences, two different entry points:
+## 开发原则
 
-| Audience | Entry | Asks |
-|---|---|---|
-| **Skill user** (agent doing Canvas tasks for the user) | [`skill.md`](../skill.md) | "What can I do for this Canvas student right now?" |
-| **Skill developer** (this file) | `docs/DEVELOPMENT.md` | "How is this repo organized? What's the current state? Where do I write things?" |
+- 先核对当前 checkout、未提交变更、相关实现及测试，不覆盖其他工作。
+- 目录规范只在 `workspace-layout.md` 定义。路径解析使用显式根目录或共享定位逻辑，不从作业目录固定向上跳若干层。
+- Skills 是按需领域指引，见 [skills 架构](skills-architecture-spec.md)。不要添加固定阶段、模板回执或独立 repair 流程作为普通作业前置条件。
+- 继续任务时复用有效调查、补充更新与缺口，维护同一份短 `pipeline.md`。
+- 用户指令和课程具体要求优先。例行实现、阅读、验证无需新增审批；Canvas 提交仍需明确授权。
+- 历史 staged 协议与测试可以维护，但不得成为普通任务入口。历史文档顶部标注状态，不改写过去的验证事实。
 
-If you only read `skill.md`, you'd think the repo is a runtime tool. Reading this file first tells you it's also an evolving project with its own roadmap, conventions, and verification rituals.
+## 修改与验证
 
-## Sister repo
+先针对实际变更运行相关测试，再检查 README 三个版本、AGENTS/CLAUDE/skill 路由、相关任务说明及示例是否一致。涉及归档路径时检查多个学期、课程 ID 冲突、旧路径兼容读取和新路径写入；迁移还需核对内容完整性、链接与自动化配置。
 
-The Canvas data layer (`canvascli`) lives at **`~/workspace/canvascli/`** (or wherever the user cloned it). It's a separate git repo, installed into AutoStudy's `.venv` via `pip install -e`. When you change Canvas access behavior, that work belongs in `canvascli/`, not here.
+检查 `git diff --check`。公开变更不要包含真实课程资料、认证状态或私人日志。只报告实际运行过的验证；不因 parser 通过就声称端到端成功。
 
-For the full three-project workflow, branch policy, verification rules, and
-documentation-sync checklist, read `COLLABORATION.md`.
-
-Layer boundary:
-
-- `canvascli` is the data layer: Canvas login/session, REST API calls, pagination, course/assignment/file/announcement/submission commands, and stable JSON output.
-- `autoust` is the application layer: skill routing, task orchestration, study/homework workflows, user confirmation points, and documentation for agents.
-
-When a bug or feature request touches both, land the data-layer change in `canvascli` first, then update AutoStudy docs/tasks against the new CLI contract. For rapid development, keep both repos on the user's long-lived update branch (`codex/deepwisdom-updates`) and commit there; open a PR only when the user asks for review or release.
-
-## Reference project
-
-Canvas Copilot is the design reference for this project. Prefer the local clone at **`/Users/deepwisdom/Desktop/project/canvas_copilot`** when it exists; otherwise use the public repo [X-isdoingreat/Canvas_pilot_public](https://github.com/X-isdoingreat/Canvas_pilot_public). Before inventing a new Canvas workflow, inspect how Canvas Copilot solved similar problems, especially around deep assignment reconnaissance, submission safeguards, hooks, tests, and recurring automation.
-
-AutoStudy's distilled notes live in `canvas-pilot-reference.md`. Treat that file as the first stop for "what should we borrow from Canvas Copilot?" and go to the source repo when implementation details matter.
-
-Superpowers is the workflow reference for agent handoff discipline: brainstorm
-before plans, plans before execution, fresh subagents with curated context, and
-independent review before completion claims. It is a design reference, not a
-runtime dependency. AutoStudy translates these practices into its own runtime
-protocol in `docs/runtime-agent-protocol.md`.
-
-Historical M3.5 staged homework direction is recorded in `COLLABORATION.md` and
-`canvas-pilot-reference.md`: use agent-led Canvas Generic Stage 1-5
-reconnaissance, write a standardized `spec.md`, keep `problem.md` only as
-compatibility, run a post-recon alignment loop that writes confirmed
-`investigation/alignment_brief.md`, and execute through `pipeline_design.md`
-instead of `task_profile.yaml`.
-
-Five design principles govern M3.5+ development (full text in
-`COLLABORATION.md` -> Design Principles):
-
-1. Assistant, not automation
-2. Dynamic skills composition, no fixed pipelines
-3. Multi-turn iteration (in-session resume + cross-session refinement)
-4. Three-layer preference system (task / course / user)
-5. Review-first design (composable sub-agent review per pipeline stage)
-
-## Skills architecture
-
-Skills are **domain expertise supplements** — not fixed pipeline scripts. The
-complete spec is in **`skills-architecture-spec.md`**. Read that file before
-modifying any skill or adding a new one.
-
-Key rules:
-- `_index.md` only lists top-level skills; sub-skills are discovered progressively
-- Each skill follows a standard template: Contract → Guidance → Appendices →
-  Post-processing → Self-check
-- Skills compose via files in the workbench, not direct calls
-- Language/type specifics go in appendix files, not the main skill or `_index.md`
-- Defaults live in skill files; overrides come from confirmed
-  `investigation/alignment_brief.md` plus `pipeline_design.md` (task),
-  `data/course-overrides/` (course, not yet implemented), or Claude Code memory
-  (user, not yet implemented)
-
-## Start-of-session checklist
-
-Run through these before touching code:
-
-1. Read `docs/progress/agent-progress.md` — what just happened and where we left off
-2. Read `docs/plans/feature-list.json` — the structured backlog with status
-3. Check `git log --oneline | head -10` — recent commits across both repos (`AutoStudy` and `~/workspace/canvascli`)
-4. Re-verify one or two recently-passed features by re-running them. If a regression slipped in, **flip status back to `untested` first**, then start work
-5. Pick exactly one in-progress or pending feature to push forward
-
-## End-of-session checklist
-
-Don't close out a session without:
-
-- [ ] Updating `docs/progress/agent-progress.md` (1–3 sentences on what changed and what's next)
-- [ ] Updating the status of any feature you touched in `docs/plans/feature-list.json`
-- [ ] Capturing verification evidence somewhere (in-line commit body, screenshot path noted, or `docs/verification/<date>/<topic>/` if substantial)
-- [ ] No uncommitted changes (or if there are, explain in progress note why)
-
-## Where things live
-
-| What | Where |
-|---|---|
-| Roadmap (the big picture) | [ROADMAP.md](./ROADMAP.md) |
-| Runtime agent handoff protocol | [runtime-agent-protocol.md](./runtime-agent-protocol.md) |
-| Skill entry for end-users | [skill.md](../skill.md) at repo root |
-| Marketing scenarios | [MARKETING.md](./MARKETING.md) |
-| Burnt-once pitfalls | [PITFALLS.md](./PITFALLS.md) |
-| Backlog with status | `docs/plans/feature-list.json` |
-| Session handoff notes | `docs/progress/agent-progress.md` |
-| Skill tool/task docs | `sub-skills/{tools,tasks}/*.md` |
-
-We're deliberately **not** maintaining `docs/standards/` or `docs/adr/` yet. ROADMAP and PITFALLS already cover what they would, at this scale. Add them if/when they become genuinely needed (i.e. a new contributor can't ramp up without them).
-
-## Rules of thumb
-
-- **Verification before "passing"**: never flip a feature from in-progress to passing without something concrete to point to (a commit, a tested artifact, a screenshot).
-- **Pitfalls go to `docs/PITFALLS.md` or the relevant sub-skill `.md`**, not into chat or commit messages. The next agent won't read your commit body.
-- **Don't write features that require canvascli changes without confirming the canvascli repo state first.** They evolve together.
-- **Repo > chat**: anything worth knowing twice goes to a file, not the conversation.
-
-## Influences
-
-The two-tier (entry / docs) layout follows the pattern in [Aurorra1123/ust-dev `harness-best-practice` skill](https://github.com/Aurorra1123/ust-dev/commit/59761756ebcd01d68a4b62729b4e03f09948dc63) — minus the parts that don't fit AutoStudy yet (`adr/`, `architecture/`, `verification/`, `exec-plan/`). We adopt only `progress/` and `plans/` for now; the rest is overhead at our current size.
+跨仓库协作见 [COLLABORATION.md](COLLABORATION.md)。按当前用户要求和仓库分支状态工作，不强制沿用历史机器路径或某个固定开发分支。提交、推送与发布遵循当前任务授权。

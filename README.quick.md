@@ -1,158 +1,22 @@
-# AutoStudy 快速版
+# AutoStudy 快速开始
 
-> 默认入口：中文完整版见 [README.md](./README.md)。英文完整版见 [README.en.md](./README.en.md)。
+AutoStudy 是多学期、多课程学习工作区。Canvas CLI 负责访问能力，AutoStudy 负责结构、来源与按需任务指引。
 
-本 Fork：[pheonix2006/autoust-dev](https://github.com/pheonix2006/autoust-dev)；
-原仓库：[Aurorra1123/autoust-dev](https://github.com/Aurorra1123/autoust-dev)。
-
-AutoStudy 是本地 Canvas LMS 学业助手，已在 HKUST(GZ) 的 Canvas 实例上验证。它跑在 Claude Code / Codex 这类
-agent 环境里，帮你同步作业、规划 ddl、侦查作业要求、生成本地草稿、整理课件和课程笔记。
-
-一句话记住：
+在选定的学习项目中打开 Codex / Claude Code，说：
 
 ```text
-AutoStudy 先看清 Canvas，再问清你的意图，然后生成你能审核的本地产物。
+请准备 https://github.com/pheonix2006/autoust-dev 和
+https://github.com/pheonix2006/canvascli 两个同级独立仓库。
+先检查并复用已有目录，读取 autoust-dev/skill.md，按初始化指南配置环境，
+核对 Canvas 学期与课程后建立学习工作区。
 ```
 
----
+优先本地 editable 安装 Canvas CLI。首次浏览器 SSO 登录后，用 `whoami` 检查；支持的 GET 请求会尝试自动续签，失败时再交互登录。
 
-## 最常用命令
+常用指令：看看这周作业、同步课程资料、生成课程笔记、完成或继续修改作业、现在巡检课程、设置每日巡检。定时巡检只在用户要求时建立，并确认时间、范围和通知偏好。
 
-```text
-每天帮我巡检课程，维护学期总览和每日记录
-```
+数据在 `data/semesters/<TERM>/`：课程下保留材料、笔记和 `homework/`，学期下保存报告与扫描；`data/workflows/`、`data/setup/` 全局共享。学期来自实际元数据，课程与作业按精确 IDs 核对。
 
-使用 [daily-course-review](sub-skills/tasks/daily-course-review.md)。首次询问时间，
-默认 **08:00**，明确时区与课程范围。定时任务绑定当前 Codex 对话，在本对话显示
-启动、快速扫描和最终结果；电脑与桌面应用需保持运行。新课件默认生成简短预习，
-可以关闭。复用已有学期总览并维护每日日志，失败会保留缺口，不写成“无更新”。
-已有设置不重复询问；修改时间会更新原任务。“现在巡检一下”只运行一次。
-同对话调度不可用时会说明限制，不会悄悄换成独立任务。资料和设置保存在本地。
+默认作业先完整调查，再写简洁总结与一份 `pipeline.md`，自主制作和验证。无强制阶段文件；提交 Canvas 仍需明确授权。私人数据留在本地。
 
-```text
-看看这周有什么作业
-```
-
-会生成：
-
-```text
-data/sync/current/{courses,assignments,announcements}.json
-data/runs/<date>/REPORT.md
-data/runs/<date>/plan.json
-data/runs/<date>/pending_assignments.json
-```
-
-然后你选择编号，AutoStudy 才会进入某个作业。
-
-```text
-帮我完成 DSAA2011 Project，先生成本地草稿，不提交
-```
-
-作业入口为 `do-homework.md`，每项作业创建或复用一个目录。
-先完整调查课程来源（题目、rubric、syllabus、announcements、modules/pages、课件与
-外链），看过内容以后再筛选任务相关信息。保留有用资料、简洁调查总结和一份短
-`pipeline.md`，之后自主制作、验证与修改。没有强制 stage/review/ledger 或逐阶段审批。
-继续修改也走同一流程，复用调查并核实更新，不另建 repair plan/pipeline。
-
-```text
-同步 DSAA2011 的资料
-写 DSAA2011 的课程笔记
-```
-
-会使用：
-
-```text
-data/courses/<COURSE>/
-├── materials/
-├── canvas_sync/
-└── notes/
-```
-
----
-
-## 第一次使用
-
-AutoStudy 要作为一个独立仓库运行，不是只复制一个 `skill.md`。推荐先在 Claude Code / Codex 里打开一个准备用来放 AutoStudy 的空白项目文件夹，然后说：
-
-```text
-请把 https://github.com/pheonix2006/autoust-dev clone 到当前空白文件夹，
-读取里面的 skill.md，并按步骤帮我完成初始化。
-```
-
-agent 应该先确认当前目录是空目录，再执行：
-
-```bash
-git clone https://github.com/pheonix2006/autoust-dev.git .
-```
-
-如果当前目录不是空的，或当前工作区不明确，agent 应该先问你要放到哪里。不要让它默默默认到 `~/workspace`、桌面或下载目录。
-
-你也可以明确指定一个固定文件夹：
-
-```text
-请把 https://github.com/pheonix2006/autoust-dev clone 到 ~/workspace/autoust-dev，
-然后进入这个文件夹，读取里面的 skill.md，并按步骤帮我完成初始化。
-```
-
-也可以自己先 clone：
-
-```bash
-mkdir -p ~/workspace
-git clone https://github.com/pheonix2006/autoust-dev.git ~/workspace/autoust-dev
-cd ~/workspace/autoust-dev
-```
-
-然后在这个目录里说：
-
-```text
-请使用当前目录里的 AutoStudy skill，阅读 skill.md，然后帮我初始化。
-```
-
-Canvas 登录：
-
-```bash
-.venv/bin/canvascli init --canvas-url "https://canvas.example.edu"
-```
-
-检查登录态：
-
-```bash
-.venv/bin/canvascli whoami
-```
-
-登录态在本机：
-
-```text
-~/Library/Application Support/canvascli/state.json
-```
-
-这是 credential，不要打印、复制、提交。
-
----
-
-## 重要底线
-
-- `sync-status` 只规划，不自动做作业。
-- AutoStudy 不会自动提交 Canvas。
-- 先读实际题目、讲义和相关要求，再自主制作和检查；目录结构由作业需要决定。
-- group 信息、partner 名字、dataset、personal experience、video URL 等必须由用户提供或标记为 human review item。
-- 产物都在本地 `data/`，你需要审核后再决定是否提交。
-
----
-
-## 当前状态
-
-可用：
-
-- Canvas 状态同步和计划生成。
-- Canvas-grounded 作业侦查。
-- `do-homework` 自主制作、继续修改和验证，旧阶段流程仅供显式选用。
-- 课程资料同步。
-- 课程笔记生成。
-
-仍在打磨：
-
-- 简洁流程在不同类型作业中的实际使用验证。
-- 继续/修复已有草稿的体验。
-- 课程级/用户级偏好记忆。
-- 安全 sandbox 作业上的真实 Canvas submission E2E。
+[完整说明](README.md) · [权威目录规范](docs/workspace-layout.md) · [初始化指南](sub-skills/tools/canvascli-setup.md)

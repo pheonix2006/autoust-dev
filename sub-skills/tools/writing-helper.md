@@ -5,43 +5,31 @@ description: Draft structured academic prose (essay/report/reflection) from spec
 
 # writing-helper
 
-> In default homework, follow `sub-skills/tasks/do-homework.md`. Use this guide
-> for domain/CLI advice only. Fixed spec/pipeline inputs, stage handoffs and
-> report/output schemas below belong to legacy staged mode, not prerequisites
-> for ordinary assignments. Actual source requirements still apply.
+> Follow [do-homework](../tasks/do-homework.md) and the [workspace layout](../../docs/workspace-layout.md).
+> This is optional domain guidance. Use the actual investigation, short plan and
+> deliverables; paths and output examples below are suggestions, not required schemas.
 
 Academic prose workhorse. Reads the assignment workbench and produces
 `draft.md`. This file provides cross-type writing guidance; type-specific
 structure (essay/report/reflection) is in appendix files loaded based on
-`pipeline_design.md` declarations.
+`pipeline.md` declarations.
 
 **Skills provide reference guidance, not hard constraints.** If the task spec
 has explicit format requirements, follow the spec.
 
-## Contract
+## Inputs and outputs
 
-- **reads:**
-  - `spec.md` (PRIMARY)
-  - `pipeline_design.md` (prose stage, deliverables, constraints)
-  - `investigation/rubric.md`
-  - `references/` (fetched readings, spec text, data)
-  - `problem.md` (compatibility; read after spec.md)
-  - `investigation/user_notes.md` (optional)
-  - `investigation/user_scope.md` (optional)
-  - `references.bib` (optional, from paper-search)
-  - `draft/figures/*.{pdf,png}` or `figures/*.{pdf,png}` (optional, from code
-    or figure-maker stages)
-  - `draft/*.{pdf,png}` (compatibility scan only; prefer organized figures)
-- **writes:**
-  - `draft.md` (pandoc-friendly markdown with YAML frontmatter)
-- **preconditions:**
-  - `spec.md` and `pipeline_design.md` must exist and contain actual content
+Read the actual source requirements, rubric, concise investigation summary and
+current `pipeline.md`, plus relevant originals and existing deliverables. Reuse
+verified evidence; no standardized spec file or stage declaration is required.
+Write to the assignment folder using its real submission/project structure.
+Suggested filenames below may be adapted to that structure.
 
 ## Guidance
 
 ### Determine structure
 
-Read spec, pipeline_design, rubric, and references. Match the prose stage
+Read spec, current plan, rubric, and references. Match the prose deliverable
 against supported structures:
 
 | Structure | Cues | Typical sections |
@@ -50,12 +38,12 @@ against supported structures:
 | `report` | "results", "methodology", "discussion", "experiment" | Abstract → Intro → Methods → Results → Discussion → Conclusion |
 | `reflection` | "reflect", "experience", "learned" | Context → What happened → What I learned → Implications |
 
-If `pipeline_design.md` declares `type`, use that. Otherwise infer from cues.
+If `pipeline.md` declares `type`, use that. Otherwise infer from cues.
 Load the matching appendix for detailed structure guidance.
 
 ### Honor length and citation style
 
-Take from spec/pipeline_design/rubric:
+Take from spec/current plan/rubric:
 
 - `length: ~1500 words` → aim ±10%, budget per section
 - `citation_style: APA` → in-text `(Author, 2024)`, end `## References`
@@ -89,7 +77,7 @@ means `figures/<name>.png`, not `draft/figures/<name>.png`.
 
 If useful figures exist only as flat `draft/*.png`, either move/copy them into
 `draft/figures/` before writing the report or explicitly record a blocking
-`auto_fixable` concern for the organizer/report stage. Do not accept a text-only
+problem to fix before delivering the report. Do not accept a text-only
 experimental report when generated plots are available unless the assignment
 explicitly forbids figures or the report is already over a strict page limit.
 
@@ -109,14 +97,14 @@ monofont: Menlo
 ---
 ```
 
-If `pipeline_design.md` declares `required_spec_constraints`, or if `spec.md`
-contains explicit hard requirements for this prose deliverable or stage
+If `pipeline.md` declares `required_spec_constraints`, or if `investigation.md`
+contains explicit hard requirements for this prose deliverable
 artifact, the draft must not weaken those requirements. Examples include exact
 section order, page limits, citation style, required datasets/sources, required
 template/style files, file names, and credit/disclosure wording.
-Use this scope phrase: prose deliverable or stage artifact.
+Apply each requirement to the relevant deliverable.
 
-- Preserve each hard requirement in the draft or stage receipt with enough
+- Preserve each hard requirement in the draft or verification notes with enough
   evidence for the renderer/reviewer to verify it later.
 - If a hard requirement needs a specific source format, produce that source
   format, or produce content clearly labeled as preview only.
@@ -128,7 +116,7 @@ Use this scope phrase: prose deliverable or stage artifact.
 
 Quality bar:
 
-- Every assertion grounded in spec/references/pipeline_design
+- Every assertion grounded in spec/references/current plan
 - Specific problems get specific answers (no `[PROBLEM N]` placeholders)
 - For critiques: name the paper, authors, quote specific claims
 - Every section has a topic sentence
@@ -146,15 +134,15 @@ Quality bar:
 ## Post-processing
 
 - Hand off to `pdf-renderer.md` with `draft.md` → `final.pdf`
-- If `pipeline_design.md` declares `post-process: humanize`, or user requested
+- If `pipeline.md` declares `post-process: humanize`, or user requested
   at [B], load `humanizer.md` and apply to draft before rendering
 - **Suggestion for pipeline design**: for academic reports and essays submitted
   to institutions with AI-detection tools, consider adding `post-process: humanize`
-  to the pipeline_design stage. This is optional and should be the agent's judgment call.
+  to the current task. This is optional and should be the agent's judgment call.
 
 ## Self-check
 
-- [ ] `spec.md` and `pipeline_design.md` read completely
+- [ ] `investigation.md` and `pipeline.md` read completely
 - [ ] Draft engages with specific content from spec/references (not generic)
 - [ ] Word count within ±10% of requirement (if specified)
 - [ ] All rubric criteria addressed in draft

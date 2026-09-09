@@ -1,3 +1,5 @@
+> 历史设计或验证记录：正文保留当时的路径、流程和结果，不作为当前初始化或运行指令。现行目录见 [学习工作区规范](workspace-layout.md)，默认作业流程见 [do-homework](../sub-skills/tasks/do-homework.md)。
+
 # AutoStudy 开发方向讨论：从 AutoPku 对标中找到我们的路径
 
 > **受众**：AutoStudy 项目负责人

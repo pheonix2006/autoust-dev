@@ -1,3 +1,5 @@
+> 历史设计或验证记录：正文保留当时的路径、流程和结果，不作为当前初始化或运行指令。现行目录见 [学习工作区规范](workspace-layout.md)，默认作业流程见 [do-homework](../sub-skills/tasks/do-homework.md)。
+
 # AutoPku vs AutoStudy：Agent 架构对比分析
 
 > **目标**：深入剖析 AutoPku 如何使用 agent 完成任务，并与 AutoStudy 当前设计做逐层对比，找出差异、优劣和可借鉴之处。
